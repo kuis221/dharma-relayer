@@ -20,7 +20,7 @@ class App extends Component {
       <Provider store={store}>
         <div className="app">
           <div className="app__container container-fluid">
-            <div class="row flex-sm-nowrap">
+            <div className="row flex-sm-nowrap">
               <div className="app__content-left col-sm">
                 <UserInfo />
               </div>
