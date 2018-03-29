@@ -7,6 +7,7 @@ import './App.css';
 import UserInfo from '../user-info/user-info.js';
 import LoanRequests from '../../containers/loan-requests/loan-requests';
 import IssuedLoans from '../../containers/issued-loans/issued-loans';
+import {HOST_URL} from '../../common/api/urls'
 
 const store = createStore(
   rootReducer,
@@ -31,6 +32,9 @@ class App extends Component {
                 <IssuedLoans />
               </div>
             </div>
+          </div>
+          <div className="app__demo-link">
+            <a href={`${HOST_URL}/swagger/`} target="_blank">API Demo</a>
           </div>
         </div>
       </Provider>
