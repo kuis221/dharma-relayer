@@ -146,7 +146,7 @@ class PlaceLoanRequest extends Component{
           <div className="loan-request-form__collateral-input-wrapper">
             <input defaultValue="Collateral value 150%" className="loan-request-form__input"/>
           </div>
-          <div className="loan-request-form__collateral-input-wrapper">
+          <div className="loan-request-form__collateral-btn-wrapper">
             <button
               className={"loan-request-form__collateral-btn " + (valid ? "" : "loan-request-form_disabled")}
               onClick={handleSubmit(this.allowCollateralUseClick.bind(this))}>
