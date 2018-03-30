@@ -2,20 +2,19 @@
 # yarn lockfile v1
 
 
-"@dharmaprotocol/contracts@0.0.26":
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/@dharmaprotocol/contracts/-/contracts-0.0.26.tgz#fc88ab32f0074758234f420bc631ef5e1f651566"
+"@dharmaprotocol/contracts@0.0.24":
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/@dharmaprotocol/contracts/-/contracts-0.0.24.tgz#146f86be1e5f1548f07a82dfdaeb40ae1fba7630"
   dependencies:
     NonFungibleToken "https://github.com/dharmaprotocol/NonFungibleToken.git"
     zeppelin-solidity "^1.6.0"
 
-"@dharmaprotocol/dharma.js@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@dharmaprotocol/dharma.js/-/dharma.js-0.0.32.tgz#8d1485a5377e0fa97033f4f7e2d806b880543382"
+"@dharmaprotocol/dharma.js@0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@dharmaprotocol/dharma.js/-/dharma.js-0.0.30.tgz#693185bf08c2808d0e73df40e63ee377b1ae8777"
   dependencies:
-    "@dharmaprotocol/contracts" "0.0.26"
+    "@dharmaprotocol/contracts" "0.0.24"
     "@types/lodash" "^4.14.104"
-    abi-decoder "https://github.com/dharmaprotocol/abi-decoder"
     bignumber.js "^5.0.0"
     ethereumjs-util "^5.1.4"
     jsonschema "^1.2.2"
@@ -54,9 +53,9 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
-"abi-decoder@git+https://github.com/dharmaprotocol/abi-decoder.git":
+"abi-decoder@git+https://github.com/EvgeniyLoginov/abi-decoder.git":
   version "1.1.0"
-  resolved "git+https://github.com/dharmaprotocol/abi-decoder.git#9448e51a134633673ccbb07a3df0ed2b0c47ab62"
+  resolved "git+https://github.com/EvgeniyLoginov/abi-decoder.git#5a00fd9cc6d1b31188e795d8bc6f75d2b03d5f9a"
   dependencies:
     babel-core "^6.23.1"
     babel-loader "^6.3.2"
