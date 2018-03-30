@@ -39,9 +39,9 @@
   version "4.14.106"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.106.tgz#6093e9a02aa567ddecfe9afadca89e53e5dce4dd"
 
-"NonFungibleToken@git+https://github.com/dharmaprotocol/NonFungibleToken.git":
+"NonFungibleToken@https://github.com/dharmaprotocol/NonFungibleToken.git":
   version "0.0.1"
-  resolved "git+https://github.com/dharmaprotocol/NonFungibleToken.git#3a45b200d14be1e1fc454f4b0fbf7f7b0d81f133"
+  resolved "https://github.com/dharmaprotocol/NonFungibleToken.git#3a45b200d14be1e1fc454f4b0fbf7f7b0d81f133"
   dependencies:
     zeppelin-solidity "^1.4.0"
 
