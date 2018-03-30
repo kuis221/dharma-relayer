@@ -1,3 +1,4 @@
+
 html, body {
   height: 100%;
   font-size: 14px;
@@ -7,10 +8,17 @@ html, body {
   margin:0;
   padding:0;
 }
+select{
+  -webkit-appearance:none; /* !* remove the strong OSX influence from Webkit *!*/
+  border-radius:0;
+  background: url("../assets/icons8-sort-down-filled-50.png") no-repeat 90% 50%;
+  background-size: 14px;
+}
 input, select{
   background-color: #d6cec0;
   padding: 8px;
   font-weight: 600;
+  line-height:normal;
 }
 button {
   font-weight: 600;
