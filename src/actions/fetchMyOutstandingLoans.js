@@ -3,33 +3,33 @@ import * as loanStatuses from '../common/loanStatuses';
 import {getDefaultAccount} from '../common/services/web3Service';
 import {fromDebtOrder} from '../common/services/dharmaService';
 
-export const FETCH_FILLED_DEBTS = 'FETCH_FILLED_DEBTS';
-export const FETCH_FILLED_DEBTS_SUCCESS = 'FETCH_FILLED_DEBTS_SUCCESS';
-export const FETCH_FILLED_DEBTS_FAIL = 'FETCH_FILLED_DEBTS_FAIL';
+export const FETCH_MY_OUTSTANDING_LOANS = 'FETCH_MY_OUTSTANDING_LOANS';
+export const FETCH_MY_OUTSTANDING_LOANS_SUCCESS = 'FETCH_MY_OUTSTANDING_LOANS_SUCCESS';
+export const FETCH_MY_OUTSTANDING_LOANS_FAIL = 'FETCH_MY_OUTSTANDING_LOANS_FAIL';
 
-const fetchFilledDebtsStart = () => ({
-  type: FETCH_FILLED_DEBTS
+const fetchMyOutstandingLoansStart = () => ({
+  type: FETCH_MY_OUTSTANDING_LOANS
 });
 
-const fetchFilledDebtsSuccess = (debts) => ({
-  type: FETCH_FILLED_DEBTS_SUCCESS,
+const fetchMyOutstandingLoansSuccess = (debts) => ({
+  type: FETCH_MY_OUTSTANDING_LOANS_SUCCESS,
   debts
 });
 
-export function fetchFilledDebts(){
+export function fetchMyOutstandingLoans(){
   return dispatch => {
-    dispatch(fetchFilledDebtsStart());
+    dispatch(fetchMyOutstandingLoansStart());
 
     let defaultAccount = getDefaultAccount();
     if(defaultAccount){
-      return debtsApi.getAll(loanStatuses.FILLED, defaultAccount)
+      return debtsApi.getForDebtor(loanStatuses.FILLED, defaultAccount)
         .then(async(debts) => {
           let mappedDebts = [];
           for(var i=0; i<debts.length; i++){
             let dharmaDebt = await fromDebtOrder(debts[i]);
             mappedDebts.push({...dharmaDebt, creationTime: debts[i].creationTime});
           }
-          dispatch(fetchFilledDebtsSuccess(mappedDebts));
+          dispatch(fetchMyOutstandingLoansSuccess(mappedDebts));
         });
     }
 
