@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Confirm from '../confirm/confirm';
 import {calculateNumberOfPayments, calculateRepaymentAmount, calculateTotalPaymentAmount} from '../../common/services/utilities';
-import * as amortizationValues from '../../common/amortizationFrequencies';
+import {RELAYER_AMORTIZATION_FREQUENCIES, DHARMA_AMORTIZATION_UNITS} from '../../common/amortizationFrequencies';
 
 
 
@@ -18,22 +18,22 @@ class ConfirmFund extends Component{
     let termInDays = termLength;
     let amortizationFrequency = null;
 
-    if(amortizationUnit === "hours"){
+    if(amortizationUnit === DHARMA_AMORTIZATION_UNITS.HOURS){
       termInDays = termLength / 24;
     }
-    else if(amortizationUnit === "days"){
+    else if(amortizationUnit === DHARMA_AMORTIZATION_UNITS.DAYS){
       termInDays = termLength;
-      amortizationFrequency = amortizationValues.DAILY;
+      amortizationFrequency = RELAYER_AMORTIZATION_FREQUENCIES.DAILY;
     }
-    else if(amortizationUnit === "weeks"){
+    else if(amortizationUnit === DHARMA_AMORTIZATION_UNITS.WEEKS){
       termInDays = termLength * 7;
-      amortizationFrequency = amortizationValues.WEEKLY;
+      amortizationFrequency = RELAYER_AMORTIZATION_FREQUENCIES.WEEKLY;
     }
-    else if(amortizationUnit === "months"){
+    else if(amortizationUnit === DHARMA_AMORTIZATION_UNITS.MONTHS){
       termInDays = termLength * 30;
-      amortizationFrequency = amortizationValues.MONTHLY;
+      amortizationFrequency = RELAYER_AMORTIZATION_FREQUENCIES.MONTHLY;
     }
-    else if(amortizationUnit === "years"){
+    else if(amortizationUnit === DHARMA_AMORTIZATION_UNITS.YEARS){
       termInDays = amortizationUnit * 365;
     }
 
@@ -58,9 +58,11 @@ class ConfirmFund extends Component{
         <div className="confirm__row">
           Maximum interest rate willing to pay: {interest} %
         </div>
-        <div className="confirm__row">
-          Collateral amount: ?????
-        </div>
+        {/*
+         <div className="confirm__row">
+         Collateral amount: ?????
+         </div>
+        */}
         <div className="confirm__row">
           Total loan repayment amount: {repaymentAmount} {token}
         </div>
