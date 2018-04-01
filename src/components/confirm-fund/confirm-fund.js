@@ -9,7 +9,7 @@ class ConfirmFund extends Component{
   render(){
     let {onConfirm, onCancel, isLoading, loanRequest} = this.props;
 
-    let amount = loanRequest.principalAmount;
+    let amount = loanRequest.dharmaDebtOrder.principalAmount.toNumber();
     let token = loanRequest.dharmaDebtOrder.principalTokenSymbol;
     let termLength = loanRequest.dharmaDebtOrder.termLength.toNumber();
     let amortizationUnit = loanRequest.dharmaDebtOrder.amortizationUnit;
