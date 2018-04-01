@@ -10,7 +10,7 @@ function renderRows(rows) {
         return (
             <tr key={i++}>
                 <td className="issued-table__table-cell">{amountString} {row.token}</td>
-                <td className="issued-table__table-cell">{row.term}</td>
+                <td className="issued-table__table-cell">{row.term} days</td>
                 <td className="issued-table__table-cell">{row.interest}</td>
                 <td className="issued-table__table-cell">{row.date}</td>
             </tr>

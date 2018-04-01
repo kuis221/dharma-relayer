@@ -14,7 +14,7 @@ function renderRows(rows){
         <tr key={i++}>
           <td className="loan-table-small__table-cell">{row.date.toLocaleDateString()} <br /> {row.date.toLocaleTimeString()}</td>
           <td className="loan-table-small__table-cell">{`${amountString} ${row.principalTokenSymbol}`}</td>
-          <td className="loan-table-small__table-cell">{calculateTermInDays(row.amortizationUnit, row.termLength)}</td>
+          <td className="loan-table-small__table-cell">{calculateTermInDays(row.amortizationUnit, row.termLength)} days</td>
           <td className="loan-table-small__table-cell">{row.interestRate + ' %'}</td>
         </tr>
       );
