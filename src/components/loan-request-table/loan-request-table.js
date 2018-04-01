@@ -34,7 +34,7 @@ function renderRows(rows, fundFunction) {
 
 function LoanRequestsTable(props) {
     return (
-        <div className="loan-table">
+        <div className="loan-table scrollable-table">
             <div className="loan-table-header">
                 {props.header}
             </div>
@@ -51,7 +51,7 @@ function LoanRequestsTable(props) {
                     <th className="loan-table__table-header"></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody className="loan-table__table-body scrollable-table__table-body scrollable">
                     {renderRows(props.rows, props.onFundClick)}
                 </tbody>
             </table>
