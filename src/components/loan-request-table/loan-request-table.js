@@ -18,7 +18,7 @@ function renderRows(rows, fundFunction) {
               return (
                   <tr key={i++}>
                       <td className="loan-table__table-cell">{row.creationTimeParsed.toLocaleDateString()}<br/>{row.creationTimeParsed.toLocaleTimeString()}</td>
-                      <td className="loan-table__table-cell">{row.principalAmount} {row.dharmaDebtOrder.principalTokenSymbol}</td>
+                      <td className="loan-table__table-cell">{row.dharmaDebtOrder.principalAmount.toNumber()} {row.dharmaDebtOrder.principalTokenSymbol}</td>
                       <td className="loan-table__table-cell">{interestRate + '%'}</td>
                       <td className="loan-table__table-cell">{termInDays}</td>
                       {/*<td className="loan-table__table-cell">N/A</td>*/}

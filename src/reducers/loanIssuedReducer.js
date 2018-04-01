@@ -7,7 +7,7 @@ export default function (state = [], action) {
                 .map(loan => ({...loan, issuanceBlockTimeParsed: new Date(loan.issuanceBlockTime)}))
                 .sort((a,b) => a.issuanceBlockTimeParsed < b.issuanceBlockTimeParsed ? 1 : (-1))
                 .map(loan => ({
-                    amount: loan.principalAmount,
+                    amount: loan.dharmaDebtOrder.principalAmount.toNumber(),
                     token: loan.dharmaDebtOrder.principalTokenSymbol,
                     date: loan.issuanceBlockTimeParsed.toLocaleDateString() + " " + loan.issuanceBlockTimeParsed.toLocaleTimeString(),
                     term: loan.dharmaDebtOrder.termLength.toNumber(),
