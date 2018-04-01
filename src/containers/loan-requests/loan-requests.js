@@ -31,7 +31,7 @@ class LoanRequests extends Component {
     }
 
     render() {
-        let {loanRequests, fundConfirmation, showFundConfirmation, hideFundConfirmation, fillLoanRequest, runTablesUpdate} = this.props;
+        let {loanRequests, fundConfirmation, showFundConfirmation, hideFundConfirmation, fillLoan, fillLoanRequest, runTablesUpdate} = this.props;
 
         return (
             <div>
@@ -40,7 +40,7 @@ class LoanRequests extends Component {
                     <ModalBody>
                         {
                             fundConfirmation.modalVisible && fundConfirmation.loanRequest &&
-                            <ConfirmFund loanRequest={fundConfirmation.loanRequest} onCancel={hideFundConfirmation} onConfirm={(debtOrder) => fillLoanRequest(debtOrder, runTablesUpdate)} />
+                            <ConfirmFund loanRequest={fundConfirmation.loanRequest} onCancel={hideFundConfirmation} onConfirm={(debtOrder) => fillLoanRequest(debtOrder, runTablesUpdate)} isLoading={fillLoan.isLoading}/>
                         }
                     </ModalBody>
                 </Modal>
@@ -49,9 +49,10 @@ class LoanRequests extends Component {
     }
 }
 
-let mapStateToProps = ({loanRequests, fundConfirmation}) => ({
+let mapStateToProps = ({loanRequests, fundConfirmation, fillLoan}) => ({
     loanRequests,
-    fundConfirmation
+    fundConfirmation,
+    fillLoan
 });
 
 let mapDispatchToProps = { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, runTablesUpdate };
