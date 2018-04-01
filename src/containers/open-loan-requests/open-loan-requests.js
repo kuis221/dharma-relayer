@@ -24,10 +24,17 @@ class OpenLoanRequests extends Component{
   }
 
   render(){
-    let {myOpenLoanRequests} = this.props;
+    let rows = this.props.myOpenLoanRequests.map(loan => ({
+      date: new Date(loan.creationTime),
+      principalAmount: loan.principalAmount.toNumber(),
+      principalTokenSymbol: loan.principalTokenSymbol,
+      termLength: loan.termLength.toNumber(),
+      amortizationUnit: loan.amortizationUnit,
+      interestRate:loan.interestRate
+    }));
 
     return (
-      <LoanTableSmall header="My open loan requests" rows={myOpenLoanRequests}/>
+      <LoanTableSmall header="My open loan requests" dateColumnHeader="Date loan requested" rows={rows}/>
     );
   }
 }
