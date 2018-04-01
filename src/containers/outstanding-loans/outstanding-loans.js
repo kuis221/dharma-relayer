@@ -25,9 +25,17 @@ class OutstandingLoans extends Component{
   }
 
   render(){
-    let {myOutstandingLoans} = this.props;
+    let rows = this.props.myOutstandingLoans.map(loan => ({
+      date: new Date(loan.issuanceBlockTime),
+      principalAmount: loan.principalAmount.toNumber(),
+      principalTokenSymbol: loan.principalTokenSymbol,
+      termLength: loan.termLength.toNumber(),
+      amortizationUnit: loan.amortizationUnit,
+      interestRate:loan.interestRate
+    }));
+
     return (
-      <LoanTableSmall header="My outstading loans" rows={myOutstandingLoans}/>
+      <LoanTableSmall header="My outstading loans" dateColumnHeader="Date loan issued" rows={rows}/>
     );
   }
 }
