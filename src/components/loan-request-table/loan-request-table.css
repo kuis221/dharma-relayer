@@ -16,7 +16,7 @@
 }
 
 .loan-table__table-header{
-    padding: 8px;
+    padding: 8px 8px 8px 10px;
     text-align: left;
     overflow: hidden;
     -o-text-overflow: ellipsis;
@@ -27,12 +27,16 @@
     width:10%;
 }
 
+.loan-table__table-header__small-label{
+    font-size: 10px;
+}
+
 .loan-table__table-body{
     max-height: 680px;
 }
 
 .loan-table__table-cell{
-    padding: 5px;
+    padding: 8px 8px 8px 10px;
     font-size: 12px;
     color: #d7cec0;
     text-align: left;

@@ -19,10 +19,13 @@
 .loan-table-small__table-header{
   padding: 8px;
   text-align:left;
-  max-width: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 25%;
+  width: 23%;
+}
+
+.loan-table-small__table-header:first-child{
+  width: 31%;
 }
 
 .loan-table-small__table-body{
@@ -30,9 +33,14 @@
 }
 
 .loan-table-small__table-cell{
-  padding: 5px;
+  padding: 5px 5px 5px 10px;
   font-size: 12px;
   color: #d7cec0;
   text-align:left;
-  width: 25%;
+  width: 23%;
 }
+
+.loan-table-small__table-cell:first-child{
+  width:31%;
+}
+
