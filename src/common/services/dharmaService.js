@@ -1,5 +1,5 @@
 import Dharma from '@dharmaprotocol/dharma.js';
-import web3, { getNetwork } from '../services/web3Service';
+import web3Provider, { getNetworkAsync, getDefaultAccount } from '../services/web3Service';
 import promisify from 'tiny-promisify';
 import BigNumber from 'bignumber.js';
 import DebtRegistry from '../protocolJson/DebtRegistry.json';
@@ -13,7 +13,6 @@ import { RELAYER_ADDRESS, RELAYER_FEE } from '../api/config.js';
 import { convertFromHumanReadable, convertToHumanReadable } from './tokenService.js';
 
 let dharma = null;
-let defaultAccount = null;
 
 export async function createDebtOrder(debtOrderInfo) {
 
@@ -33,7 +32,7 @@ export async function createDebtOrder(debtOrderInfo) {
     interestRate: new BigNumber(debtOrderInfo.interestRate),
     amortizationUnit: debtOrderInfo.amortizationUnit,
     termLength: new BigNumber(debtOrderInfo.termLength),
-    debtor: defaultAccount,
+    debtor: getDefaultAccount(),
     debtorFee: new BigNumber(0),
     creditorFee: new BigNumber(0),
     salt: BigNumber.random().mul('1e9').floor()
@@ -112,8 +111,7 @@ export async function fillDebtOrder(debtOrder) {
     dharma = await instantiateDharma();
   }
 
-  const accounts = await promisify(web3.eth.getAccounts)();
-  const creditor = accounts[0];
+  const creditor = getDefaultAccount();
   const originalDebtOrder = debtOrder.dharmaDebtOrder.originalDebtOrder;
 
   let tx = await dharma.token.setUnlimitedProxyAllowanceAsync(debtOrder.principalTokenAddress);
@@ -133,12 +131,7 @@ export async function fillDebtOrder(debtOrder) {
 }
 
 async function instantiateDharma() {
-  const networkId = await getNetwork();
-  const accounts = await promisify(web3.eth.getAccounts)();
-  if (!accounts.length) {
-    throw new Error('ETH account not available');
-  }
-  defaultAccount = accounts[0];
+  const networkId = await getNetworkAsync();
 
   if (!(networkId in DebtKernel.networks &&
     networkId in RepaymentRouter.networks &&
@@ -160,7 +153,7 @@ async function instantiateDharma() {
     debtRegistryAddress: DebtRegistry.networks[networkId].address
   };
 
-  return new Dharma(web3.currentProvider, dharmaConfig);
+  return new Dharma(web3Provider, dharmaConfig);
 }
 
 const defaultDebtOrderParams = {

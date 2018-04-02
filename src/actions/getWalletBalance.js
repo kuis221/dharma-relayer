@@ -1,4 +1,4 @@
-import {getWalletBalance as getBalance} from '../common/services/web3Service';
+import {getWalletBalanceAsync as getBalance} from '../common/services/web3Service';
 
 export const GET_WALLET_BALANCE = 'GET_WALLET_BALANCE';
 export const GET_WALLET_BALANCE_SUCCESS = 'GET_WALLET_BALANCE_SUCCESS';
