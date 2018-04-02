@@ -28,7 +28,8 @@ export function fetchMyFundedLoans() {
           mappedDebts.push({
             ...dharmaDebt,
             creationTime: debts[i].creationTime,
-            issuanceBlockTime: debts[i].issuanceBlockTime
+            issuanceBlockTime: debts[i].issuanceBlockTime,
+            issuanceHash: debts[i].issuanceHash
           });
         }
         dispatch(fetchMyFundedLoansSuccess(mappedDebts));
