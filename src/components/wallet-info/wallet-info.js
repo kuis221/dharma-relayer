@@ -56,11 +56,11 @@ class WalletInfo extends Component{
         <div className="wallet-info__balance-info">
           <p>Balance</p>
           <div>
-            <b className={isProcessing ? "wallet-info__balance-hidden" : "wallet-info__balance"}>
+            <b className={isProcessing ? "wallet-info__balance-hidden" : "wallet-info__balance"} title={`${amountString} ${selectedCurrency}`}>
               {amountString} {selectedCurrency}
             </b>
             <div className="wallet-info__currency-container">
-              {this.renderCurrencyItem(CurrencyCodes.ETH, selectedCurrency === CurrencyCodes.ETH)}
+              {this.renderCurrencyItem(CurrencyCodes.ETH, true)}
               {this.renderCurrencyItem(CurrencyCodes.DAI, selectedCurrency === CurrencyCodes.DAI)}
               {this.renderCurrencyItem(CurrencyCodes.MKR, selectedCurrency === CurrencyCodes.MKR)}
               {this.renderCurrencyItem(CurrencyCodes.REP, selectedCurrency === CurrencyCodes.REP)}
