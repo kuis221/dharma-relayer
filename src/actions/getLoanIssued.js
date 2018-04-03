@@ -26,10 +26,15 @@ export function getIssuedLoans(){
 
         return debtsApi.getAll(loanStatuses.FILLED)
             .then(async(debts) => {
+                var res = []
                 for(let i=0; i<debts.length; i++){
-                    debts[i].dharmaDebtOrder = await fromDebtOrder(debts[i]);
+                    var debtOrder = await fromDebtOrder(debts[i]);
+                    if(debtOrder){
+                        debts[i].dharmaDebtOrder = debtOrder
+                        res.push(debts[i])
+                    }
                 }
-                dispatch(getIssuedLoansSuccess(debts));
+                dispatch(getIssuedLoansSuccess(res));
             })
             .catch(err => {dispatch(getIssuedLoansFail(err))});
     }

@@ -26,10 +26,15 @@ export function getLoanRequests(){
 
         return debtsApi.getAll(loanStatuses.SIGNED_BY_DEBTOR)
             .then(async(debts) => {
+                var res = []
                 for(let i=0; i<debts.length; i++){
-                    debts[i].dharmaDebtOrder = await fromDebtOrder(debts[i]);
+                    var debtOrder = await fromDebtOrder(debts[i]);
+                    if(debtOrder){
+                        debts[i].dharmaDebtOrder = debtOrder
+                        res.push(debts[i])
+                    }
                 }
-                dispatch(getLoanRequestsSuccess(debts));
+                dispatch(getLoanRequestsSuccess(res));
             })
             .catch(err => {dispatch(getLoanRequestsFail(err))});
     }
