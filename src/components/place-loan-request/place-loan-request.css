@@ -44,6 +44,11 @@
   height: 100%;
   width: 100%;
 }
+
+.loan-request-form__select option{
+  background-color: #18253e;
+}
+
 .loan-request-form__collateral-input-wrapper{
   flex-basis: 50%;
   font-size: 12px;
