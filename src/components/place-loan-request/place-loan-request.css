@@ -67,21 +67,15 @@
   justify-content: center;
 }
 .loan-request-form__place-btn {
-  background-color: #fff;
-  color: #18253E;
+  background-color: #399A08;
+  color: #fff;
   height: 32px;
   width: 100%;
   border-radius: 2px;
   margin: 8px 0;
 }
-.loan-request-form__place-btn:hover {
-  background: rgba(255, 255, 255, 0.68);
-}
 .loan-request-form_disabled{
   background: #3D4966;
   color: #7F879A;
   cursor: not-allowed;
-}
-.loan-request-form_disabled:hover {
-  background: #3D4966;
 }
