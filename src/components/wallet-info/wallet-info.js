@@ -36,7 +36,7 @@ class WalletInfo extends Component{
         <div className="wallet-info__balance-info">
           <p>Balance</p>
           <div>
-            <b className="wallet-info__balance">
+            <b className="wallet-info__balance" title={(amount && amount.toString()) || 0}>
               {(amount && amount.toString()) || 0}
             </b>
             <div className="wallet-info__currency-container">
