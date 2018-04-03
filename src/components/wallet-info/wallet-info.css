@@ -30,6 +30,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.wallet-info__balance-hidden{
+  display:none;
+}
+
 .wallet-info__currency-container{
   display: inline-block;
   border: 1px solid #3F4A5F;
