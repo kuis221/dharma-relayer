@@ -60,7 +60,7 @@ class WalletInfo extends Component{
               {amountString} {selectedCurrency}
             </b>
             <div className="wallet-info__currency-container">
-              {this.renderCurrencyItem(CurrencyCodes.ETH, true)}
+              {this.renderCurrencyItem(CurrencyCodes.ETH, selectedCurrency === CurrencyCodes.ETH)}
               {this.renderCurrencyItem(CurrencyCodes.DAI, selectedCurrency === CurrencyCodes.DAI)}
               {this.renderCurrencyItem(CurrencyCodes.MKR, selectedCurrency === CurrencyCodes.MKR)}
               {this.renderCurrencyItem(CurrencyCodes.REP, selectedCurrency === CurrencyCodes.REP)}
