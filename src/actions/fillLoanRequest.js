@@ -17,7 +17,6 @@ export function fillLoanRequest(debtOrder, callback) {
             .then(debtOrder => {
                 let obj = {
                     status: loanStatuses.FILLED,
-                    creditorAddress: debtOrder.dharmaDebtOrder.creditor,
                     txHash: debtOrder.txHash
                 };
                 return debtsApi.put(debtOrder.id, obj);
