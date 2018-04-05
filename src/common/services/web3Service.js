@@ -35,6 +35,10 @@ export function getWalletBalanceAsync(){
   });
 }
 
+export function getNetwork() {
+  return window.web3.version.network;
+} 
+
 export function getNetworkAsync(){
   return new Promise((resolve, reject) => {
     window.web3.version.getNetwork((err, netId) => {

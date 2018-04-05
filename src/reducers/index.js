@@ -9,7 +9,8 @@ import {
   FETCH_MY_OUTSTANDING_LOANS_SUCCESS,
   RESET_LOAN_FORM,
   HIDE_LOAN_CONFIRMATION,
-  SHOW_LOAN_CONFIRMATION
+  SHOW_LOAN_CONFIRMATION,
+  GET_TOKEN_BALANCE_SUCCESS
 } from '../actions';
 import { getDefaultAccount } from '../common/services/web3Service';
 import loanRequestReducer from './loanRequestReducer';
@@ -19,6 +20,7 @@ import myOpenLoanRequestsReducer from './myOpenLoanRequestsReducer';
 import myFundedLoansReducer from './myFundedLoansReducer';
 import placeLoanReducer from './placeLoanReducer';
 import fillLoanReducer from './fillLoanReducer';
+import tokenBalancesReducer from './tokenBalancesReducer';
 
 function walletInfoReducer(state = {
   address: getDefaultAccount(),
@@ -33,6 +35,11 @@ function walletInfoReducer(state = {
       return { ...state, amount: action.balance, isProcessing:false };
     case GET_WALLET_INFO_SUCCESS:
       return { ...state, amount: action.balance, address: action.address };
+    case GET_TOKEN_BALANCE_SUCCESS:
+      if(state.selectedCurrency === action.token){
+        return {...state, amount: action.amount}
+      }
+      return state;
     default:
       return state;
   }
@@ -85,6 +92,7 @@ const rootReducer = combineReducers({
   fundConfirmation: fundConfirmationReducer,
   placeLoan: placeLoanReducer,
   fillLoan: fillLoanReducer,
+  tokenBalances: tokenBalancesReducer,
   form: formReducer
 });
 

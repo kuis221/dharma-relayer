@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, runGlobalUpdate } from '../../actions';
+import { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, runGlobalUpdate, getTokenBalance } from '../../actions';
 import LoanRequestsTable from '../../components/loan-request-table/loan-request-table';
 import {Modal, ModalBody} from '../../components/modal/modal';
 import ConfirmFund from '../../components/confirm-fund/confirm-fund';
+import Spinner from '../../components/spinner/spinner.js';
+import './loan-requests.css';
 
 let destroyTimer = null;
 
@@ -18,6 +20,8 @@ class LoanRequests extends Component {
 
     constructor(props){
         super(props);
+
+        this.confirmFillLoanRequest = this.confirmFillLoanRequest.bind(this);
     }
 
     componentDidMount(){
@@ -30,8 +34,24 @@ class LoanRequests extends Component {
         destroyTimer && destroyTimer();
     }
 
+    confirmFillLoanRequest(debtOrder){
+        let {fillLoanRequest, runGlobalUpdate, getTokenBalance} = this.props;
+        fillLoanRequest(debtOrder, () => {
+            runGlobalUpdate();
+            getTokenBalance(debtOrder.dharmaDebtOrder.principalTokenSymbol);
+        })
+    }
+
     render() {
-        let {loanRequests, fundConfirmation, showFundConfirmation, hideFundConfirmation, fillLoan, fillLoanRequest, runGlobalUpdate} = this.props;
+        let {loanRequests, fundConfirmation, showFundConfirmation, hideFundConfirmation, fillLoan, isLoading} = this.props;
+
+        if(isLoading){
+            return (
+              <div className="loan-requests__spinner-container">
+                  <Spinner/>
+              </div>
+            );
+        }
 
         return (
             <div>
@@ -40,7 +60,7 @@ class LoanRequests extends Component {
                     <ModalBody>
                         {
                             fundConfirmation.modalVisible && fundConfirmation.loanRequest &&
-                            <ConfirmFund loanRequest={fundConfirmation.loanRequest} onCancel={hideFundConfirmation} onConfirm={(debtOrder) => fillLoanRequest(debtOrder, runGlobalUpdate)} isLoading={fillLoan.isLoading}/>
+                            <ConfirmFund loanRequest={fundConfirmation.loanRequest} onCancel={hideFundConfirmation} onConfirm={this.confirmFillLoanRequest} isLoading={fillLoan.isLoading}/>
                         }
                     </ModalBody>
                 </Modal>
@@ -50,11 +70,12 @@ class LoanRequests extends Component {
 }
 
 let mapStateToProps = ({loanRequests, fundConfirmation, fillLoan}) => ({
-    loanRequests,
+    loanRequests: loanRequests.values,
+    isLoading: loanRequests.isLoading,
     fundConfirmation,
     fillLoan
 });
 
-let mapDispatchToProps = { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, runGlobalUpdate };
+let mapDispatchToProps = { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, runGlobalUpdate, getTokenBalance };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoanRequests);
