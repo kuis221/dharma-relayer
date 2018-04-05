@@ -1,7 +1,7 @@
 import React from 'react';
 import './balances-table.css';
 import Slider from '../slider/slider.js';
-
+import {isFloat} from '../../common/services/utilities';
 
 let data = [
   {
@@ -18,8 +18,23 @@ let data = [
   }
 ];
 
-function renderRows(rows){
+
+function handleUnlockChange(assetId, e, callback){
+  let unlockValue = e.target.checked;
+  if(callback){
+    callback(assetId, unlockValue);
+  }
+}
+
+function renderRows(rows, onLockUpdate){
   return rows.map(row => {
+
+    let amountString;
+    if(row.amount){
+      let amountNumber = row.amount.toNumber();
+      amountString = (isFloat(amountNumber) ? amountNumber.toFixed(5) : amountNumber);
+    }
+
     return (
       <tr key={row.id}>
         <td className="balances-table__table-cell">
@@ -29,11 +44,11 @@ function renderRows(rows){
         </td>
         <td className="balances-table__table-cell">
           <span className="balances-table__balance-value">
-            {row.amount}
+            {amountString}
           </span>
         </td>
         <td className="balances-table__table-cell">
-          <Slider on={row.unlocked} />
+          <Slider on={row.unlocked} onChange={e => handleUnlockChange(row.id, e, onLockUpdate)} />
         </td>
       </tr>
     );
@@ -57,7 +72,7 @@ function BalancesTable(props) {
           </tr>
           </thead>
           <tbody className="balances-table__table-body scrollable-table__table-body scrollable">
-          {renderRows(data)}
+          {renderRows(props.data, props.onLockUpdate)}
           </tbody>
         </table>
       </div>

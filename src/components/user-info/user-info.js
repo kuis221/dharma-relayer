@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import WalletInfoContainer from '../../containers/wallet-info-container/wallet-info-container';
 import PlaceLoanRequest from '../place-loan-request/place-loan-request.js';
-import BalancesTable from '../balances-table/balances-table.js';
+import BalancesInfo from '../../containers/balances-info/balances-info';
 import OpenLoanRequests from '../../containers/open-loan-requests/open-loan-requests';
 import OutstandingLoans from '../../containers/outstanding-loans/outstanding-loans';
 import FundedLoans from '../../containers/funded-loans/funded-loans';
@@ -18,7 +18,7 @@ class UserInfo extends Component{
           <PlaceLoanRequest />
         </div>
         <div>
-          <BalancesTable />
+          <BalancesInfo />
         </div>
         <div className="user-info__small-table">
           <OpenLoanRequests />
