@@ -32,7 +32,7 @@ function renderRows(rows, onLockUpdate){
           </span>
         </td>
         <td className="balances-table__table-cell">
-          <Slider on={row.unlocked} onChange={e => handleUnlockChange(row.id, e, onLockUpdate)} />
+          <Slider on={row.unlocked} onChange={e => handleUnlockChange(row.id, e, onLockUpdate)} loading={row.lockProcessing} />
         </td>
       </tr>
     );
@@ -56,7 +56,7 @@ function BalancesTable(props) {
           </tr>
           </thead>
           <tbody className="balances-table__table-body scrollable-table__table-body scrollable">
-          {renderRows(props.data, props.onLockUpdate)}
+            {renderRows(props.data, props.onLockUpdate)}
           </tbody>
         </table>
       </div>
