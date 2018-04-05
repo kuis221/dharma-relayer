@@ -45,7 +45,7 @@ function LoanTableSmall(props) {
       </div>
       <table className="loan-table-small__table">
         <thead>
-          <tr className="loan-table-small__table-headers">
+          <tr>
             <th className="loan-table-small__table-header" title={props.dateColumnHeader}>Date</th>
             <th className="loan-table-small__table-header" title="Loan amount">Amount</th>
             <th className="loan-table-small__table-header" title="Interest rate (per payment period)">Interest</th>
