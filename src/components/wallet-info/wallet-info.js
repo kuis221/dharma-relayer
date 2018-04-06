@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './wallet-info.css';
-import * as CurrencyCodes from '../../common/currencyCodes';
 import {isFloat} from '../../common/services/utilities';
 import Spinner from '../spinner/spinner';
+import { SUPPORTED_TOKENS } from '../../common/api/config';
 
 let destroyTimer = null;
 
@@ -17,7 +17,7 @@ class WalletInfo extends Component{
   constructor(props){
     super(props);
 
-    this.renderCurrencyItem = this.renderCurrencyItem.bind(this);
+    this.renderCurrencyItems = this.renderCurrencyItems.bind(this);
   }
 
   componentDidMount(){
@@ -26,13 +26,15 @@ class WalletInfo extends Component{
     startTimer(getWalletInfo);
   }
 
-  renderCurrencyItem(currency, isActive){
-    return (
-      <div className={"wallet-info__currency" + (isActive ? " wallet-info__currency_active" : "")}
-          onClick={() => {this.props.selectCurrency(currency)}}>
-        {currency}
-      </div>
-    );
+  renderCurrencyItems(selectedCurrency){
+    return SUPPORTED_TOKENS.map(currency => {
+      return (
+        <div key={currency} className={"wallet-info__currency" + (selectedCurrency === currency ? " wallet-info__currency_active" : "")}
+            onClick={() => {this.props.selectCurrency(currency)}}>
+          {currency}
+        </div>
+      );
+    });
   }
 
   render(){
@@ -63,11 +65,7 @@ class WalletInfo extends Component{
               </b>
             }
             <div className="wallet-info__currency-container">
-              {this.renderCurrencyItem(CurrencyCodes.ETH, selectedCurrency === CurrencyCodes.ETH)}
-              {this.renderCurrencyItem(CurrencyCodes.DAI, selectedCurrency === CurrencyCodes.DAI)}
-              {this.renderCurrencyItem(CurrencyCodes.MKR, selectedCurrency === CurrencyCodes.MKR)}
-              {this.renderCurrencyItem(CurrencyCodes.REP, selectedCurrency === CurrencyCodes.REP)}
-              {this.renderCurrencyItem(CurrencyCodes.ZRX, selectedCurrency === CurrencyCodes.ZRX)}
+              {this.renderCurrencyItems(selectedCurrency)}
             </div>
           </div>
         </div>

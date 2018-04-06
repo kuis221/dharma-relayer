@@ -1,5 +1,5 @@
 import {RELAYER_AMORTIZATION_FREQUENCIES, DHARMA_AMORTIZATION_UNITS} from '../../common/amortizationFrequencies';
-import { LOANSCAN_URL } from '../../common/api/urls'
+import { LOANSCAN_URL } from '../../common/api/config'
 
 export const calculateCollateralAmount = debtAmount => 1.5 * debtAmount;
 
