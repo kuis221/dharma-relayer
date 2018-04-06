@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {API_URL} from './urls';
+import {API_URL} from './config';
 
 const DEBTS_URL = `${API_URL}/Debts`;
 
