@@ -25,16 +25,21 @@ export function getIssuedLoans(){
         dispatch(getIssuedLoansStart());
 
         return debtsApi.getAll(loanStatuses.FILLED)
-            .then(async(debts) => {
-                var res = []
-                for(let i=0; i<debts.length; i++){
-                    var debtOrder = await fromDebtOrder(debts[i]);
-                    if(debtOrder){
-                        debts[i].dharmaDebtOrder = debtOrder
-                        res.push(debts[i])
-                    }
-                }
-                dispatch(getIssuedLoansSuccess(res));
+            .then((debts) => {
+
+                let promises = debts.map(debt => {
+                    return fromDebtOrder(debt).then(debtOrder => {
+                        if(debtOrder){
+                            return {...debt, dharmaDebtOrder:debtOrder};
+                        }
+                        return null;
+                    })
+                });
+
+                Promise.all(promises).then(mappedDebts => {
+                    let filtered = mappedDebts.filter(d => d !== null);
+                    dispatch(getIssuedLoansSuccess(filtered));
+                });
             })
             .catch(err => {dispatch(getIssuedLoansFail(err))});
     }

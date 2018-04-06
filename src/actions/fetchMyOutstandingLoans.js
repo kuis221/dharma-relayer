@@ -23,20 +23,25 @@ export function fetchMyOutstandingLoans() {
     let defaultAccount = getDefaultAccount();
     if (defaultAccount) {
       return debtsApi.getForDebtor(loanStatuses.FILLED, defaultAccount)
-        .then(async (debts) => {
-          let mappedDebts = [];
-          for (var i = 0; i < debts.length; i++) {
-            let dharmaDebt = await fromDebtOrder(debts[i]);
-            if (dharmaDebt) {
-              mappedDebts.push({
-                ...dharmaDebt,
-                creationTime: debts[i].creationTime,
-                issuanceBlockTime: debts[i].issuanceBlockTime,
-                issuanceHash: debts[i].issuanceHash
-              });
-            }
-          }
-          dispatch(fetchMyOutstandingLoansSuccess(mappedDebts));
+        .then((debts) => {
+          let promises = debts.map(debt => {
+            return fromDebtOrder(debt).then(dharmaDebt => {
+              if(dharmaDebt){
+                return {
+                  ...dharmaDebt,
+                  creationTime: debt.creationTime,
+                  issuanceBlockTime: debt.issuanceBlockTime,
+                  issuanceHash: debt.issuanceHash
+                };
+              }
+              return null;
+            })
+          });
+
+          Promise.all(promises).then(mappedDebts => {
+            let filtered = mappedDebts.filter(d => d !== null);
+            dispatch(fetchMyOutstandingLoansSuccess(filtered));
+          });
         });
     }
 
