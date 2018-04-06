@@ -9,6 +9,7 @@
 
 .unlock-tokens__toggle-wrapper{
   display:inline-block;
+  line-height: 14px;
 }
 
 .unlock-tokens__toggle-label{

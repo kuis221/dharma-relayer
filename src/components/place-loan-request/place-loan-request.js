@@ -107,7 +107,10 @@ class PlaceLoanRequest extends Component{
 
     return (
       <Modal show={debtOrderConfirmation.modalVisible} size="md" onModalClosed={hideLoanConfirmation}>
-        <WizardSteps steps={['Unlock', 'Review', 'Success']} currentStep={debtOrderConfirmation.stepNumber} />
+        <div className="loan-request-form__wizard-wrapper">
+          <WizardSteps steps={['Unlock', 'Review', 'Success']} currentStep={debtOrderConfirmation.stepNumber} />
+        </div>
+
         <ModalBody>
           {
             debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 1) &&
