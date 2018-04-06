@@ -28,6 +28,10 @@
   justify-content: space-between;
 }
 
+.confirm__btn-wrapper.confirm__btn-wrapper_centered{
+  justify-content: center;
+}
+
 .confirm__btn{
   color: white;
   height: 32px;
@@ -40,4 +44,10 @@
 
 .confirm__btn_cancel{
   background-color: #B51313;
+}
+
+.confirm__btn_disabled{
+  background-color: #3D4966;
+  color: #7F879A;
+  cursor: not-allowed;
 }

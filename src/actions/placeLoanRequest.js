@@ -45,7 +45,12 @@ export function placeLoanRequest({amount, currency, maxInterest, term, amortizat
           type: PLACE_LOAN_SUCCESS
         });
         callback();
-        alert('Placed successfully!');
+        //alert('Placed successfully!');
+      })
+      .catch(err => {
+        dispatch({
+          type: PLACE_LOAN_FAIL
+        });
       });
   };
 }
