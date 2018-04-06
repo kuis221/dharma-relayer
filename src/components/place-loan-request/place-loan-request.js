@@ -17,8 +17,10 @@ import * as CurrencyCodes from '../../common/currencyCodes';
 import {RELAYER_AMORTIZATION_FREQUENCIES} from '../../common/amortizationFrequencies';
 import {Modal, ModalBody} from '../modal/modal';
 import ConfirmLoanRequest from '../confirm-loan-request/confirm-loan-request';
-import StepUnlockTokens from '../step-unlock-tokens/step-unlock-tokens.js';
+import UnlockCollateralToken from '../unlock-collateral-token/unlock-collateral-token.js';
 import PlaceLoanSuccess from '../place-loan-success/place-loan-success.js';
+import WizardSteps from '../wizard-steps/wizard-steps.js';
+import CheckIcon from '../check-icon/check-icon.js';
 import {calculateCollateralAmount} from '../../common/services/utilities';
 
 const termValues = {
@@ -100,9 +102,43 @@ class PlaceLoanRequest extends Component{
     this.props.changeAmortizationFrequency(newSelectedFrequency);
   }
 
+  renderModal(){
+    const { debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation, collateralType } = this.props;
+
+    return (
+      <Modal show={debtOrderConfirmation.modalVisible} size="md" onModalClosed={hideLoanConfirmation}>
+        <WizardSteps steps={['Unlock', 'Review', 'Success']} currentStep={debtOrderConfirmation.stepNumber} />
+        <ModalBody>
+          {
+            debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 1) &&
+            <UnlockCollateralToken
+              collateralType={debtOrderConfirmation.collateralType}
+              collateralTokenUnlocked={debtOrderConfirmation.collateralTokenUnlocked}
+              unlockInProgress={debtOrderConfirmation.unlockInProgress}
+              onCancel={this.cancelLoanRequest.bind(this)}
+              onConfirm={() => changeStep(2)}
+              unlockCollateralToken={unlockCollateralToken}/>
+          }
+          {
+            debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 2) &&
+            <ConfirmLoanRequest
+              {...debtOrderConfirmation}
+              onCancel={() => changeStep(1)}
+              onConfirm={this.placeLoanRequestHandler.bind(this)}
+              isLoading={placeLoan.isLoading} />
+          }
+          {
+            debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 3) &&
+            <PlaceLoanSuccess
+              onConfirm={hideLoanConfirmation}/>
+          }
+        </ModalBody>
+      </Modal>
+    );
+  }
 
   render(){
-    const { handleSubmit, valid, collateralAllowed, term, debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation } = this.props;
+    const { handleSubmit, valid, collateralAllowed, term} = this.props;
 
     return (
       <div className="loan-request-form">
@@ -230,35 +266,7 @@ class PlaceLoanRequest extends Component{
             PLACE LOAN REQUEST
           </button>
         </div>
-        <Modal show={debtOrderConfirmation.modalVisible} size="md" onModalClosed={this.props.hideLoanConfirmation}>
-            <div>
-              Wizard info here
-            </div>
-            <ModalBody>
-              {
-                debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 1) &&
-                <StepUnlockTokens
-                  {...debtOrderConfirmation}
-                  onCancel={this.cancelLoanRequest.bind(this)}
-                  onConfirm={() => changeStep(2)}
-                  unlockCollateralToken={unlockCollateralToken}/>
-              }
-              {
-                debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 2) &&
-                <ConfirmLoanRequest
-                  {...debtOrderConfirmation}
-                  onCancel={() => changeStep(1)}
-                  onConfirm={this.placeLoanRequestHandler.bind(this)}
-                  isLoading={placeLoan.isLoading} />
-              }
-              {
-                debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 3) &&
-                <PlaceLoanSuccess
-                  onConfirm={hideLoanConfirmation}/>
-              }
-            </ModalBody>
-        </Modal>
-
+        {this.renderModal()}
       </div>
     );
   }

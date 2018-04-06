@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {calculateNumberOfPayments, calculateRepaymentAmount, calculateTotalPaymentAmount, isFloat} from '../../common/services/utilities';
 import Confirm from '../confirm/confirm';
-import './step-unlock-tokens.css';
+import './unlock-collateral-token.css';
 import Slider from '../slider/slider.js';
 
-class StepUnlockTokens extends Component{
+class UnlockCollateralToken extends Component{
 
   onToggleChange(e){
     let unlockValue = e.target.checked;
@@ -46,4 +46,4 @@ class StepUnlockTokens extends Component{
 }
 
 
-export default StepUnlockTokens;
+export default UnlockCollateralToken;
