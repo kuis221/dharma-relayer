@@ -18,6 +18,10 @@
 .loan-request-form__label{
   color: #B3B7BF;
 }
+.loan-request-form__label_collateral{
+  line-height:14px;
+  font-size:10px;
+}
 .loan-request-form__input-wrapper{
   flex-basis: 75%;
 }
@@ -83,4 +87,8 @@
   background: #3D4966;
   color: #7F879A;
   cursor: not-allowed;
+}
+.loan-request-form__wizard-wrapper{
+  padding: 20px 60px 40px;
+  border-bottom: 2px solid #B3B7BF;
 }

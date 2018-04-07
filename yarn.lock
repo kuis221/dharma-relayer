@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-"@dharmaprotocol/contracts@0.0.24":
-  version "0.0.24"
-  resolved "https://registry.yarnpkg.com/@dharmaprotocol/contracts/-/contracts-0.0.24.tgz#146f86be1e5f1548f07a82dfdaeb40ae1fba7630"
+"@dharmaprotocol/contracts@0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@dharmaprotocol/contracts/-/contracts-0.0.29.tgz#45b1c8f2ab0c2c0a583c86ac4d53e483c6166941"
   dependencies:
-    NonFungibleToken "https://github.com/dharmaprotocol/NonFungibleToken.git"
-    zeppelin-solidity "^1.6.0"
+    zeppelin-solidity "^1.8.0"
 
-"@dharmaprotocol/dharma.js@0.0.30":
-  version "0.0.30"
-  resolved "https://registry.yarnpkg.com/@dharmaprotocol/dharma.js/-/dharma.js-0.0.30.tgz#693185bf08c2808d0e73df40e63ee377b1ae8777"
+"@dharmaprotocol/dharma.js@^0.0.34":
+  version "0.0.34"
+  resolved "https://registry.yarnpkg.com/@dharmaprotocol/dharma.js/-/dharma.js-0.0.34.tgz#a219bd2a81f9c5a804e8f3aa0b49964882c4a3e6"
   dependencies:
-    "@dharmaprotocol/contracts" "0.0.24"
+    "@dharmaprotocol/contracts" "0.0.29"
     "@types/lodash" "^4.14.104"
+    abi-decoder "https://github.com/dharmaprotocol/abi-decoder"
     bignumber.js "^5.0.0"
     ethereumjs-util "^5.1.4"
     jsonschema "^1.2.2"
@@ -39,12 +39,6 @@
   version "4.14.106"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.106.tgz#6093e9a02aa567ddecfe9afadca89e53e5dce4dd"
 
-"NonFungibleToken@https://github.com/dharmaprotocol/NonFungibleToken.git":
-  version "0.0.1"
-  resolved "https://github.com/dharmaprotocol/NonFungibleToken.git#3a45b200d14be1e1fc454f4b0fbf7f7b0d81f133"
-  dependencies:
-    zeppelin-solidity "^1.4.0"
-
 abab@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
@@ -53,9 +47,9 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
-"abi-decoder@git+https://github.com/EvgeniyLoginov/abi-decoder.git":
+"abi-decoder@git+https://github.com/dharmaprotocol/abi-decoder.git":
   version "1.1.0"
-  resolved "git+https://github.com/EvgeniyLoginov/abi-decoder.git#5a00fd9cc6d1b31188e795d8bc6f75d2b03d5f9a"
+  resolved "git+https://github.com/dharmaprotocol/abi-decoder.git#9448e51a134633673ccbb07a3df0ed2b0c47ab62"
   dependencies:
     babel-core "^6.23.1"
     babel-loader "^6.3.2"
@@ -7953,7 +7947,7 @@ yargs@~3.10.0:
     decamelize "^1.0.0"
     window-size "0.1.0"
 
-zeppelin-solidity@^1.4.0, zeppelin-solidity@^1.6.0:
+zeppelin-solidity@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/zeppelin-solidity/-/zeppelin-solidity-1.8.0.tgz#049fcde7daea9fc85210f8c6db9f8cd1ab8a853a"
   dependencies:
