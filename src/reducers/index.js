@@ -13,7 +13,8 @@ import {
   LOCK_COLLATERAL_TOKEN_SUCCESS,
   UNLOCK_COLLATERAL_TOKEN,
   LOCK_COLLATERAL_TOKEN,
-  SET_LOAN_REQUEST_OFFSET
+  SET_LOAN_REQUEST_OFFSET,
+  FETCH_MY_OUTSTANDING_LOANS_SUCCESS
 } from '../actions';
 import { getDefaultAccount } from '../common/services/web3Service';
 import loanRequestReducer from './loanRequestReducer';
@@ -45,15 +46,6 @@ function walletInfoReducer(state = {
         return {...state, amount: action.amount}
       }
       return state;
-    default:
-      return state;
-  }
-}
-
-function myOutstandingLoansReducer(state = [], action) {
-  switch (action.type) {
-    case FETCH_MY_OUTSTANDING_LOANS_SUCCESS:
-      return action.debts;
     default:
       return state;
   }
