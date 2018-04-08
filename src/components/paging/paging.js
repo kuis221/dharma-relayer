@@ -1,7 +1,11 @@
 import React from 'react';
 
 export default function(props){
-  let {pagesTotal, currentPageNum, visiblePagesCount, onPageClick} = props;
+  let {offset, totalItemsCount, pageSize, visiblePagesCount, onPageClick} = props;
+
+  let pagesTotal = parseInt(totalItemsCount / pageSize, 10);
+  pagesTotal = (totalItemsCount / pageSize - pagesTotal) > 0 ? pagesTotal + 1 : pagesTotal;
+  let currentPageNum = Math.floor(offset/pageSize);
 
   let prevDisabled = currentPageNum <= 0;
   let nextDisabled = currentPageNum >= (pagesTotal - 1);

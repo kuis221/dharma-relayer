@@ -7,7 +7,7 @@ import Spinner from '../../components/spinner/spinner.js';
 import '../../common/styles/pagination.css';
 import './issued-loans.css';
 
-const pageSize = 40;
+const pageSize=40;
 
 let destroyTimer = null;
 let startTimer = (func) => {
@@ -44,19 +44,16 @@ class IssuedLoans extends Component {
     renderPagination(){
         let {getIssuedLoans, setIssuedLoansOffset, offset, totalItemsCount} = this.props;
 
-        let pagesTotal = parseInt(totalItemsCount / pageSize, 10);
-        pagesTotal = (totalItemsCount / pageSize - pagesTotal) > 0 ? pagesTotal + 1 : pagesTotal;
-        let currentPageNum = Math.floor(offset/pageSize);
-
         return (
           <Paging
-            currentPageNum={currentPageNum}
+            offset={offset}
+            totalItemsCount={totalItemsCount}
+            pageSize={pageSize}
             onPageClick={(pageNum) => {
                         setIssuedLoansOffset(pageSize * pageNum);
                         getIssuedLoans(pageSize * pageNum, pageSize);
                     }
                 }
-            pagesTotal={pagesTotal}
             visiblePagesCount={5} />
         );
     }
