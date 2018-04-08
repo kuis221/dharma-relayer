@@ -3,7 +3,6 @@ import { reducer as formReducer } from 'redux-form';
 import {
   SELECT_CURRENCY,
   SELECT_CURRENCY_SUCCESS,
-  ALLOW_COLLATERAL_SUCCESS,
   GET_WALLET_INFO_SUCCESS,
   FETCH_MY_OUTSTANDING_LOANS_SUCCESS,
   RESET_LOAN_FORM,
@@ -50,17 +49,6 @@ function walletInfoReducer(state = {
   }
 }
 
-function collateralAllowedReducer(state = false, action) {
-  switch (action.type) {
-    case ALLOW_COLLATERAL_SUCCESS:
-      return true;
-    case RESET_LOAN_FORM:
-      return false;
-    default:
-      return state;
-  }
-}
-
 function myOutstandingLoansReducer(state = [], action) {
   switch (action.type) {
     case FETCH_MY_OUTSTANDING_LOANS_SUCCESS:
@@ -81,8 +69,6 @@ function debtOrderConfirmationReducer(state = {
       return { ...state, modalVisible: true, stepNumber: 1, collateralTokenUnlocked: false, ...action.debtOrder };
     case HIDE_LOAN_CONFIRMATION:
       return { ...state, modalVisible: false };
-    case ALLOW_COLLATERAL_SUCCESS:
-      return { ...state, modalVisible: true, ...action.debtOrder };
     case CHANGE_DEBT_ORDER_CONFIRMATION_STEP:
       return {...state, stepNumber: action.step};
     case UNLOCK_COLLATERAL_TOKEN_SUCCESS:
@@ -99,7 +85,6 @@ function debtOrderConfirmationReducer(state = {
 
 const rootReducer = combineReducers({
   walletInfo: walletInfoReducer,
-  collateralAllowed: collateralAllowedReducer,
   myOpenLoanRequests: myOpenLoanRequestsReducer,
   myFundedLoans: myFundedLoansReducer,
   loanRequests: loanRequestReducer,
