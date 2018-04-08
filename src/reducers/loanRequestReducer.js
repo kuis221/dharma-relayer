@@ -15,7 +15,7 @@ export default function (state = {
             return {
                 ...state,
                 isLoading: false,
-                showPaging:true,
+                showPaging: action.values && (action.values.length > 0) && (action.values.length !== action.totalItemsCount),
                 totalItemsCount: action.totalItemsCount,
                 values: action.loans.map(loan => {
                     return {
