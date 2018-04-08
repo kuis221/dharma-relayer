@@ -43,3 +43,9 @@
 .loan-table-small__table-body{
   max-height:220px;
 }
+
+.loan-table-small__spinner-container{
+  /*position:relative;*/
+  /*top:50px;*/
+  margin-top:50px;
+}

@@ -10,9 +10,11 @@ const getIssuedLoansStart = () => ({
     type: GET_LOAN_ISSUED
 });
 
-const getIssuedLoansSuccess = (loans) => ({
+const getIssuedLoansSuccess = (loans, offset, totalItemsCount) => ({
     type: GET_LOAN_ISSUED_SUCCESS,
-    loans
+    loans,
+    offset,
+    totalItemsCount
 });
 
 const getIssuedLoansFail = (error) => ({
@@ -20,12 +22,13 @@ const getIssuedLoansFail = (error) => ({
     error
 });
 
-export function getIssuedLoans(){
+export function getIssuedLoans(offset, limit){
     return dispatch => {
         dispatch(getIssuedLoansStart());
 
-        return debtsApi.getAll(loanStatuses.FILLED)
-            .then((debts) => {
+        return debtsApi.getAll(loanStatuses.FILLED, offset, limit)
+            .then((resp) => {
+                let {items:debts, totalItemsCount} = resp;
 
                 let promises = debts.map(debt => {
                     return fromDebtOrder(debt).then(debtOrder => {
@@ -38,7 +41,7 @@ export function getIssuedLoans(){
 
                 Promise.all(promises).then(mappedDebts => {
                     let filtered = mappedDebts.filter(d => d !== null);
-                    dispatch(getIssuedLoansSuccess(filtered));
+                    dispatch(getIssuedLoansSuccess(filtered, offset, totalItemsCount));
                 });
             })
             .catch(err => {dispatch(getIssuedLoansFail(err))});
