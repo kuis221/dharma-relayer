@@ -57,7 +57,7 @@ class ConfirmFund extends Component{
           <b>Loan term: </b><strong>{termInDays}</strong> days
         </div>
         <div className="confirm__row">
-          <b>Interest rate willing to pay: </b><strong>{interest}</strong> %
+          <b>Interest rate: </b><strong>{interest}</strong> %
         </div>
         {/*
          <div className="confirm__row">

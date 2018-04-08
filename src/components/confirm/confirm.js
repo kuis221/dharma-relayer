@@ -4,7 +4,7 @@ import './confirm.css';
 
 class Confirm extends Component{
   render(){
-    let {header, confirmText, cancelText, onConfirm, onCancel, isLoading} = this.props;
+    let {header, confirmText, cancelText, onConfirm, onCancel, isLoading, confirmDisabled} = this.props;
 
     return (
       <div className="confirm">
@@ -16,7 +16,8 @@ class Confirm extends Component{
             { isLoading ? <Spinner /> :
               <div className="confirm__btn-wrapper">
                 <button
-                  className="confirm__btn confirm__btn_confirm"
+                  className={"confirm__btn confirm__btn_confirm " + (confirmDisabled ? "confirm__btn_disabled" : "")}
+                  disabled={confirmDisabled}
                   onClick={() => onConfirm && onConfirm()}>
                   {confirmText}
                 </button>

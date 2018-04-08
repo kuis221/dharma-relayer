@@ -12,46 +12,50 @@ class ConfirmLoanRequest extends Component{
     let totalPaymentAmount = calculateTotalPaymentAmount(repaymentAmount, numberOfPayments);
 
     return (
-      <Confirm
-        header="You are about to create a loan request with the following terms:"
-        confirmText="PLACE LOAN REQUEST"
-        cancelText="CANCEL LOAN REQUEST"
-        onConfirm={() => onConfirm(values)}
-        onCancel={onCancel}
-        isLoading={isLoading}>
+      <div>
+        <Confirm
+          header="You are about to create a loan request with the following terms:"
+          confirmText="PLACE LOAN REQUEST"
+          cancelText="BACK"
+          onConfirm={() => onConfirm(values)}
+          onCancel={onCancel}
+          isLoading={isLoading}>
 
-        <div className="confirm__row">
-          <b>Loan amount: </b><strong>{isFloat(amount) ? amount.toFixed(5) : amount}</strong> {currency}
+            <div className="confirm__row">
+              <b>Loan amount: </b><strong>{isFloat(amount) ? amount.toFixed(5) : amount}</strong> {currency}
+            </div>
+            <div className="confirm__row">
+              <b>Loan term: </b><strong>{term}</strong> days
+            </div>
+            <div className="confirm__row">
+              <b>Interest rate: </b><strong>{maxInterest}</strong> %
+            </div>
+            {
+              collateralAmount && (
+                <div className="confirm__row">
+                  <b>Collateral amount: </b><strong>{collateralAmount}</strong> {collateralType}
+                </div>
+              )
+            }
+            <div className="confirm__row">
+              <b>Total loan repayment amount: </b><strong>{isFloat(repaymentAmount) ? repaymentAmount.toFixed(5) : repaymentAmount}</strong> {currency}
+            </div>
+            <div className="confirm__row">
+              <b>Number of payments: </b><strong>{numberOfPayments}</strong>
+            </div>
+            <div className="confirm__row">
+              <b>Payment frequency: </b><strong>{amortizationFrequency}</strong>
+            </div>
+            <div className="confirm__row">
+              <b>Payment amount: </b><strong>{isFloat(totalPaymentAmount) ? totalPaymentAmount.toFixed(5) : totalPaymentAmount}</strong> {currency}
+            </div>
+            <br/>
+            <div className="confirm__row">
+              <b>Relayer fees: </b><strong>0.00%</strong>
+            </div>
+            <hr/>
+          </Confirm>
         </div>
-        <div className="confirm__row">
-          <b>Loan term: </b><strong>{term}</strong> days
-        </div>
-        <div className="confirm__row">
-          <b>Interest rate: </b><strong>{maxInterest}</strong> %
-        </div>
-        {/*
-          <div className="confirm__row">
-            Collateral amount: {collateralAmount} {collateralType}
-          </div>
-        */}
-        <div className="confirm__row">
-          <b>Total loan repayment amount: </b><strong>{isFloat(repaymentAmount) ? repaymentAmount.toFixed(5) : repaymentAmount}</strong> {currency}
-        </div>
-        <div className="confirm__row">
-          <b>Number of payments: </b><strong>{numberOfPayments}</strong>
-        </div>
-        <div className="confirm__row">
-          <b>Payment frequency: </b><strong>{amortizationFrequency}</strong>
-        </div>
-        <div className="confirm__row">
-          <b>Payment amount: </b><strong>{isFloat(totalPaymentAmount) ? totalPaymentAmount.toFixed(5) : totalPaymentAmount}</strong> {currency}
-        </div>
-        <br/>
-        <div className="confirm__row">
-          <b>Relayer fees: </b><strong>0.00%</strong>
-        </div>
-        <hr/>
-      </Confirm>
     );
   }
 }
