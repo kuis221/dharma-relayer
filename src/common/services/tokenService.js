@@ -66,7 +66,7 @@ export async function unlockCollateralTokenAsync(symbol, amount, unlock) {
   }
 }
 
-export async function getTokenContractBySymbolAsync(symbol) {
+async function getTokenContractBySymbolAsync(symbol) {
   if (symbol in (await supportedTokensPromise)) {
     if (!(symbol in cachedTokens)) {
       const TokenContract = contract({

@@ -8,7 +8,7 @@
   dependencies:
     zeppelin-solidity "^1.8.0"
 
-"@dharmaprotocol/dharma.js@^0.0.34":
+"@dharmaprotocol/dharma.js@0.0.34":
   version "0.0.34"
   resolved "https://registry.yarnpkg.com/@dharmaprotocol/dharma.js/-/dharma.js-0.0.34.tgz#a219bd2a81f9c5a804e8f3aa0b49964882c4a3e6"
   dependencies:

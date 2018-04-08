@@ -1,5 +1,4 @@
 export * from './selectCurrency';
-export * from './allowCollateral';
 export * from './getWalletInfo';
 export * from './placeLoanRequest';
 export * from './fetchMyOpenedLoanRequests';
