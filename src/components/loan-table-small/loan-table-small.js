@@ -2,6 +2,9 @@ import React from 'react';
 import './loan-table-small.css';
 import { isFloat, calculateTermInDays, formatLoanscanLink } from '../../common/services/utilities';
 import { SHOW_LOANSCAN_LINK } from '../../common/api/config';
+import Paging from '../../components/paging/paging.js';
+import Spinner from '../../components/spinner/spinner.js';
+
 
 function renderAmount(row) {
   let amountString = isFloat(row.principalAmount) ? row.principalAmount.toFixed(2) : row.principalAmount;
@@ -37,26 +40,46 @@ function renderRows(rows) {
     });
 }
 
-function LoanTableSmall(props) {
+function renderPagination({currentPageNum, pagesTotal, onPageClick}){
   return (
-    <div className="loan-table-small scrollable-table">
-      <div className="loan-table-small__header">
-        {props.header}
-      </div>
-      <table className="loan-table-small__table">
-        <thead>
-          <tr>
-            <th className="loan-table-small__table-header" title={props.dateColumnHeader}>Date</th>
-            <th className="loan-table-small__table-header" title="Loan amount">Amount</th>
-            <th className="loan-table-small__table-header" title="Interest rate (per payment period)">Interest</th>
-            <th className="loan-table-small__table-header" title="Loan term (days)">Term</th>
-          </tr>
-        </thead>
-        <tbody className="loan-table-small__table-body scrollable-table__table-body scrollable">
-          {renderRows(props.rows)}
-        </tbody>
-      </table>
+    <div className="relayer-pagination">
+      <Paging
+        currentPageNum={currentPageNum}
+        onPageClick={onPageClick}
+        pagesTotal={pagesTotal}
+        visiblePagesCount={5} />
     </div>
+  );
+}
+
+function LoanTableSmall(props) {
+  if(props.isLoading){
+    return (
+      <Spinner/>
+    );
+  }
+  return (
+    <React.Fragment>
+      <div className="loan-table-small scrollable-table">
+        <div className="loan-table-small__header">
+          {props.header}
+        </div>
+        <table className="loan-table-small__table">
+          <thead>
+            <tr>
+              <th className="loan-table-small__table-header" title={props.dateColumnHeader}>Date</th>
+              <th className="loan-table-small__table-header" title="Loan amount">Amount</th>
+              <th className="loan-table-small__table-header" title="Interest rate (per payment period)">Interest</th>
+              <th className="loan-table-small__table-header" title="Loan term (days)">Term</th>
+            </tr>
+          </thead>
+          <tbody className="loan-table-small__table-body scrollable-table__table-body scrollable">
+            {renderRows(props.rows)}
+          </tbody>
+        </table>
+      </div>
+      {props.showPaging && renderPagination(props)}
+    </React.Fragment>
   );
 }
 
