@@ -177,7 +177,7 @@ class PlaceLoanRequest extends Component {
             <Field
               name="maxInterest"
               className="loan-request-form__input"
-              placeholder="For each repayment, %"
+              placeholder="per loan term, %"
               component="input"
               validate={required}
               normalize={floatOnly} />

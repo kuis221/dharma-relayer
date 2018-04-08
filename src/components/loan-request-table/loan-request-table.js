@@ -48,7 +48,7 @@ function LoanRequestsTable(props) {
                     <th className="loan-table__table-header text-right" title="Amount">Amount</th>
                     <th className="loan-table__table-header text-right" title="Term">Term</th>
                     <th className="loan-table__table-header text-right" title="Total repayment">Total repayment</th>
-                    <th className="loan-table__table-header text-right loan-table__large-cell" title="Interest per  repayment">Interest per  repayment</th>
+                    <th className="loan-table__table-header text-right loan-table__large-cell" title="Interest per loan term">Interest per loan term</th>
                     {/*<th className="loan-table__table-header">Collateral name and amount</th>*/}
                     <th className="loan-table__table-header loan-table__large-cell" title="Repayment frequency">Repayment frequency</th>
                     <th className="loan-table__table-header"></th>
