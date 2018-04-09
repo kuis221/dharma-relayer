@@ -9,7 +9,7 @@ const dharma = new Dharma(web3Provider);
 export async function createDebtOrder(debtOrderInfo) {
   let dharmaDebtOrder;
   const collateral = debtOrderInfo.collateralAmount;
-  if (collateral && new BigNumber(collateral).greaterThan(0)){
+  if (collateral && new BigNumber(collateral).greaterThan(0)) {
     dharmaDebtOrder = await createCollateralizedSimpleInterestLoan(debtOrderInfo);
   } else {
     dharmaDebtOrder = await createSimpleInterestLoan(debtOrderInfo);
@@ -43,8 +43,15 @@ export async function createDebtOrder(debtOrderInfo) {
   return result;
 }
 
+const debtOrdersCache = {};
+
 export async function fromDebtOrder(debtOrder) {
+  if (debtOrder.id in debtOrdersCache) {
+    return debtOrdersCache[debtOrder.id];
+  }
+
   try {
+    var t0 = performance.now();
     const dharmaDebtOrder = {
       kernelVersion: debtOrder.kernelAddress,
       issuanceVersion: debtOrder.repaymentRouterAddress,
@@ -66,13 +73,19 @@ export async function fromDebtOrder(debtOrder) {
     };
 
     dharmaDebtOrder.originalDebtOrder = Object.assign({}, dharmaDebtOrder)
-
-    const adapter = await dharma.adapters.getAdapterByTermsContractAddress(dharmaDebtOrder.termsContract);
+    var t1 = performance.now();
+    const adapter = await getAdapterByTermsContractAddress(dharmaDebtOrder.termsContract);
+    var t2 = performance.now();
     const convertedDebtOrder = await adapter.fromDebtOrder(dharmaDebtOrder);
+    var t3 = performance.now();
     convertedDebtOrder.principalAmount = await tokenService.convertToHumanReadable(convertedDebtOrder.principalAmount, convertedDebtOrder.principalTokenSymbol);
+    var t4 = performance.now();
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`fromDebtOrder timing: ${Math.ceil(t1 - t0)} ${Math.ceil(t2 - t1)} ${Math.ceil(t3 - t2)} ${Math.ceil(t4 - t3)}`)
+    }
 
     // turned off
-    if(false && convertedDebtOrder.collateralAmount){
+    if (false && convertedDebtOrder.collateralAmount) {
       let token = await tokenService.getTokenAddressBySymbolAsync(convertedDebtOrder.collateralTokenSymbol)
       let amount = await tokenService.convertToHumanReadable(convertedDebtOrder.collateralAmount, convertedDebtOrder.collateralTokenSymbol)
       console.log('collateral amount: ' + amount.toNumber())
@@ -81,7 +94,9 @@ export async function fromDebtOrder(debtOrder) {
       let allowance = await tokenService.convertToHumanReadable(await dharma.token.getProxyAllowanceAsync(token, convertedDebtOrder.debtor), convertedDebtOrder.collateralTokenSymbol)
       console.log('allowance: ' + allowance.toNumber())
     }
-    
+
+    debtOrdersCache[debtOrder.id] = convertedDebtOrder;
+
     return convertedDebtOrder;
   } catch (e) {
     console.error(e)
@@ -139,7 +154,7 @@ export async function getSupportedTokens() {
   return res;
 }
 
-async function createSimpleInterestLoan(debtOrderInfo){
+async function createSimpleInterestLoan(debtOrderInfo) {
   const tokenRegistry = await dharma.contracts.loadTokenRegistry();
   const principalTokenAddress = await tokenRegistry.getTokenAddressBySymbol.callAsync(debtOrderInfo.principalTokenSymbol);
   const amount = await tokenService.convertFromHumanReadable(debtOrderInfo.principalAmount, debtOrderInfo.principalTokenSymbol);
@@ -163,7 +178,7 @@ async function createSimpleInterestLoan(debtOrderInfo){
   return dharmaDebtOrder;
 }
 
-async function createCollateralizedSimpleInterestLoan(debtOrderInfo){
+async function createCollateralizedSimpleInterestLoan(debtOrderInfo) {
   const tokenRegistry = await dharma.contracts.loadTokenRegistry();
   const principalTokenAddress = await tokenRegistry.getTokenAddressBySymbol.callAsync(debtOrderInfo.principalTokenSymbol);
   const amount = await tokenService.convertFromHumanReadable(debtOrderInfo.principalAmount, debtOrderInfo.principalTokenSymbol);
@@ -189,6 +204,18 @@ async function createCollateralizedSimpleInterestLoan(debtOrderInfo){
   const dharmaDebtOrder = await dharma.adapters.collateralizedSimpleInterestLoan.toDebtOrder(collateralizedSimpleInterestLoan);
 
   return dharmaDebtOrder;
+}
+
+const adaptersCache = {}
+async function getAdapterByTermsContractAddress(termsContractAddress) {
+  if (termsContractAddress in adaptersCache) {
+    return adaptersCache[termsContractAddress];
+  }
+
+  const adapter = await dharma.adapters.getAdapterByTermsContractAddress(termsContractAddress);
+  adaptersCache[termsContractAddress] = adapter;
+
+  return adapter;
 }
 
 const defaultDebtOrderParams = {
