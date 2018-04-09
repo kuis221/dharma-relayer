@@ -145,6 +145,25 @@ class PlaceLoanRequest extends Component {
         <div className="loan-request-form__header">
           New loan request
         </div>
+        <div className="loan-request-form__row loan-request-amount">
+          <div className="loan-request-form__label-wrapper">
+            <label className="loan-request-form__label">Amount</label>
+          </div>
+          <div className="loan-request-form__input-wrapper">
+            <Field
+              name="amount"
+              className="loan-request-form__input"
+              placeholder="0"
+              component="input"
+              validate={required}
+              normalize={floatOnly}/>
+          </div>
+          <div className="loan-request-form__select-wrapper">
+            <Field name="currency" className="loan-request-form__select" component="select">
+              {this.renderCurrencyOptions()}
+            </Field>
+          </div>
+        </div>
         <div className="loan-request-form__row">
           <div className="loan-request-form__label-wrapper">
             <label className="loan-request-form__label">Term</label>
@@ -187,6 +206,12 @@ class PlaceLoanRequest extends Component {
           <div className="loan-request-form__label-wrapper">
             <label className="loan-request-form__label loan-request-form__label_collateral">Collateral use (optional)</label>
           </div>
+        </div>
+
+        <div className="loan-request-form__row loan-request-amount">
+          <div className="loan-request-form__label-wrapper">
+            <label className="loan-request-form__label loan-request-form__label_collateral">Amount</label>
+          </div>
           <div className="loan-request-form__input-wrapper">
             <Field
               name="collateralAmount"
@@ -197,25 +222,6 @@ class PlaceLoanRequest extends Component {
           </div>
           <div className="loan-request-form__select-wrapper">
             <Field name="collateralType" className="loan-request-form__select" component="select">
-              {this.renderCurrencyOptions()}
-            </Field>
-          </div>
-        </div>
-        <div className="loan-request-form__row loan-request-amount">
-          <div className="loan-request-form__label-wrapper">
-            <label className="loan-request-form__label">Amount</label>
-          </div>
-          <div className="loan-request-form__input-wrapper">
-            <Field
-              name="amount"
-              className="loan-request-form__input"
-              placeholder="0"
-              component="input"
-              validate={required}
-              normalize={floatOnly}/>
-          </div>
-          <div className="loan-request-form__select-wrapper">
-            <Field name="currency" className="loan-request-form__select" component="select">
               {this.renderCurrencyOptions()}
             </Field>
           </div>
