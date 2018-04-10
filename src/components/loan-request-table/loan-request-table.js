@@ -66,12 +66,12 @@ function LoanRequestsTable(props) {
                         <th className="loan-table__table-header"></th>
                     </tr>
                 </thead>
-                 <tbody className="loan-table__table-body scrollable-table__table-body scrollable">
-                {renderRows(props.rows, props.onFundClick)}
+                <tbody className="loan-table__table-body scrollable-table__table-body scrollable">
+                    {renderRows(props.rows, props.onFundClick)}
                 </tbody>
             </table>
-        </div> 
-    ); 
-} 
+        </div>
+    );
+}
 
 export default LoanRequestsTable;
