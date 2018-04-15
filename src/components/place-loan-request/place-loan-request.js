@@ -10,7 +10,8 @@ import {
   runGlobalUpdate,
   changeDebtOrderConfirmationStep,
   unlockCollateralToken,
-  lockCollateralToken
+  lockCollateralToken,
+  geCollateralTokenLock,
 } from '../../actions';
 import { RELAYER_AMORTIZATION_FREQUENCIES } from '../../common/amortizationFrequencies';
 import { Modal, ModalBody } from '../modal/modal';
@@ -263,6 +264,7 @@ let mapDispatchToProps = (dispatch) => ({
   },
   showLoanConfirmation(debtOrder) {
     dispatch(showLoanConfirmation(debtOrder));
+    dispatch(geCollateralTokenLock(debtOrder.currency));
   },
   runGlobalUpdate() {
     dispatch(runGlobalUpdate());
