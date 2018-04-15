@@ -30,7 +30,7 @@
 .loan-table__table-header, .loan-table__table-cell {
     padding: 6px;
     text-align: left;
-    width: 13%;
+    width: 12%;
 }
 
 .loan-table__table-cell strong {
@@ -42,14 +42,13 @@
     font-size: 13px;
 }
 
-.loan-table__table-header:first-child, .loan-table__table-cell:first-child {
-    width: 18%;
-}
 .loan-table__large-cell {
-    width: 17%;
+    width: 16%;
+}
+.loan-table__small-cell {
+    width: 8%;
 }
 .loan-table__table-header:last-child, .loan-table__table-cell:last-child {
-    width: 9%;
     padding: 6px 0;
 }
 
