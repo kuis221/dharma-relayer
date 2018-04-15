@@ -7,11 +7,12 @@ import Spinner from '../../components/spinner/spinner.js';
 
 
 function renderDate(row) {
-  
+
   if (SHOW_LOANSCAN_LINK && row.issuanceHash) {
     return (
       <td className="loan-table-small__table-cell">
-        <a href={formatLoanscanLink(row.issuanceHash)} target="_blank">{row.date.toLocaleDateString()} {row.date.toLocaleTimeString()}</a>
+        <a href={formatLoanscanLink(row.issuanceHash)}
+           target="_blank">{row.date.toLocaleDateString()} {row.date.toLocaleTimeString()}</a>
       </td>
     )
   }
@@ -21,7 +22,7 @@ function renderDate(row) {
   )
 }
 
-function renderRows(rows) {
+function renderRows({ rows, repayAvailable }) {
   let i = 0;
 
   return rows
@@ -32,14 +33,24 @@ function renderRows(rows) {
         <tr key={i++}>
           {renderDate(row)}
           <td className="loan-table-small__table-cell"><strong>{amountString}</strong> {row.principalTokenSymbol} </td>
+          {
+            repayAvailable &&
+            <td className="loan-table-small__table-cell">
+              <button className="table-btn">Repay</button>
+            </td>
+          }
           <td className="loan-table-small__table-cell"><strong>{row.interestRate.toString()}</strong> %</td>
-          <td className="loan-table-small__table-cell"><strong>{calculateTermInDays(row.amortizationUnit, row.termLength)}</strong> d</td>
+          <td className="loan-table-small__table-cell">
+            <p className="ellipsis-wrap">
+              <strong>{calculateTermInDays(row.amortizationUnit, row.termLength).toFixed(4)}</strong> d
+            </p>
+          </td>
         </tr>
       );
     });
 }
 
-function renderPagination({offset, totalItemsCount, pageSize, onPageClick}){
+function renderPagination({ offset, totalItemsCount, pageSize, onPageClick }) {
   return (
     <div className="relayer-pagination">
       <Paging
@@ -47,15 +58,15 @@ function renderPagination({offset, totalItemsCount, pageSize, onPageClick}){
         totalItemsCount={totalItemsCount}
         pageSize={pageSize}
         onPageClick={onPageClick}
-        visiblePagesCount={5} />
+        visiblePagesCount={5}/>
     </div>
   );
 }
 
 function LoanTableSmall(props) {
-  if(props.isLoading){
+  if (props.isLoading) {
     return (
-      <div  className="loan-table-small__spinner-container">
+      <div className="loan-table-small__spinner-container">
         <Spinner/>
       </div>
     );
@@ -68,15 +79,21 @@ function LoanTableSmall(props) {
         </div>
         <table className="loan-table-small__table">
           <thead>
-            <tr>
-              <th className="loan-table-small__table-header" title={props.dateColumnHeader}>Date</th>
-              <th className="loan-table-small__table-header" title="Loan amount">Amount</th>
-              <th className="loan-table-small__table-header" title="Interest rate (per payment period)">Interest</th>
-              <th className="loan-table-small__table-header" title="Loan term (days)">Term</th>
-            </tr>
+          <tr>
+            <th className="loan-table-small__table-header" title={props.dateColumnHeader}>Date</th>
+            <th className="loan-table-small__table-header" title="Loan amount">Amount</th>
+            {
+              props.repayAvailable &&
+              <th className="loan-table-small__table-header" title="Loan amount">
+                Repay
+              </th>
+            }
+            <th className="loan-table-small__table-header" title="Interest rate (per payment period)">Interest</th>
+            <th className="loan-table-small__table-header" title="Loan term (days)">Term</th>
+          </tr>
           </thead>
           <tbody className="loan-table-small__table-body scrollable-table__table-body scrollable">
-            {renderRows(props.rows)}
+          {renderRows(props)}
           </tbody>
         </table>
       </div>
