@@ -53,17 +53,23 @@ class PlaceLoanRequest extends Component {
     this.placeLoanRequestHandler = this.placeLoanRequestHandler.bind(this);
   }
 
+  getAmortizationPeriod = amortizationFrequency =>
+    PERIODS.find(period => period.value === amortizationFrequency)
+
   placeLoanRequestClick(values) {
+    const amortizationPeriod = this.getAmortizationPeriod(values.amortizationFrequency)
     this.props.showLoanConfirmation({
       ...values,
-      amortizationFrequency: values.amortizationFrequency || termValues[values.term].amortizationFrequencies[0]
+      amortizationFrequency: values.amortizationFrequency || termValues[values.term].amortizationFrequencies[0],
+      amortizationUnit: amortizationPeriod && amortizationPeriod.dharmaUnit,
     });
   }
 
   placeLoanRequestHandler(values){
     let {placeLoanRequest, runGlobalUpdate, changeStep, debtOrderConfirmation:{stepNumber}} = this.props;
     placeLoanRequest(values, () => {
-      changeStep(stepNumber + 1);
+      this.reset();
+      changeStep(4);
       runGlobalUpdate();
     });
   }
@@ -152,7 +158,7 @@ class PlaceLoanRequest extends Component {
               isLoading={placeLoan.isLoading} />
           }
           {
-            renderFinalStep &&
+            debtOrderConfirmation.modalVisible && (debtOrderConfirmation.stepNumber === 4) &&
             <PlaceLoanSuccess
               onConfirm={this.cancelLoanRequest}
               withCollateral={collateralExists}/>
@@ -212,7 +218,7 @@ class PlaceLoanRequest extends Component {
             <label className="loan-request-form__label">Payment</label>
           </div>
           <div className="loan-request-form__select-wrapper">
-            <Field name="amortizationFrequency" className="loan-request-form__select" component="select">
+            <Field disabled name="amortizationFrequency" className="loan-request-form__select" component="select">
               <option value={amortizationFrequency}>{amortizationFrequency}</option>
             </Field>
           </div>
@@ -316,6 +322,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
   form: 'LoanRequestForm',
   initialValues: {
     term: 7,
+    amortizationFrequency: RELAYER_AMORTIZATION_FREQUENCIES["HOURLY"],
     currency: SUPPORTED_TOKENS[0],
     collateralType: SUPPORTED_TOKENS[0]
   }
