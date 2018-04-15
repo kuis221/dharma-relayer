@@ -43,20 +43,13 @@ class OutstandingLoans extends Component {
   }
 
   handleRepayModal = () =>
-    this.setState(prevState => {
-      console.log("prevState")
-      console.log(prevState)
-
-      return ({
+    this.setState(prevState => ({
         isRepayModalOpened: !prevState.isRepayModalOpened
       })
-    })
+    )
 
   render() {
     let { myOutstandingLoans, showPaging, isLoading, offset, totalItemsCount, setMyOutstandingLoansOffset, fetchMyOutstandingLoans } = this.props;
-
-    console.log("this.state.isRepayModalOpened")
-    console.log(this.state.isRepayModalOpened)
 
     let rows = myOutstandingLoans.map(loan => ({
       date: new Date(loan.issuanceBlockTime),
@@ -85,10 +78,10 @@ class OutstandingLoans extends Component {
             setMyOutstandingLoansOffset(pageSize * pageNum);
             fetchMyOutstandingLoans(pageSize * pageNum, pageSize);
           }}/>
-        {
-          this.state.isRepayModalOpened &&
-          <RepayLoanModal handleClose={this.handleRepayModal}/>
-        }
+        <RepayLoanModal
+          isOpen={this.state.isRepayModalOpened}
+          handleClose={this.handleRepayModal}
+        />
       </Fragment>
     );
   }
