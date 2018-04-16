@@ -200,7 +200,7 @@ class PlaceLoanRequest extends Component {
             <label className="loan-request-form__label">Term</label>
           </div>
           <div className="loan-request-form__row loan-request-amount loan-request-input-wrapper">
-            <Field name="term" className="loan-request-form__select" component="select">
+            <Field name="term" className="loan-request-form__select loan-request-select-wrapper" component="select">
               {
                 DAYS.map(day => <option key={day} value={day}>{day}</option>)
               }
