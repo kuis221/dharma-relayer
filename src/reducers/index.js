@@ -28,6 +28,7 @@ import myOutstandingLoansReducer from './myOutstandingLoansReducer';
 import placeLoanReducer from './placeLoanReducer';
 import fillLoanReducer from './fillLoanReducer';
 import tokenBalancesReducer from './tokenBalancesReducer';
+import debtOrderConfirmationReducer from './debtOrderConfirmationReducer';
 import { SUPPORTED_TOKENS } from '../common/api/config';
 
 function walletInfoReducer(state = {
