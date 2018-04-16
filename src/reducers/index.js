@@ -4,7 +4,7 @@ import {
   SELECT_CURRENCY,
   SELECT_CURRENCY_SUCCESS,
   GET_WALLET_INFO_SUCCESS,
-  GET_TOKEN_BALANCE_SUCCESS
+  GET_TOKEN_BALANCE_SUCCESS,
 } from '../actions';
 import { getDefaultAccount } from '../common/services/web3Service';
 import loanRequestReducer from './loanRequestReducer';
@@ -41,7 +41,6 @@ function walletInfoReducer(state = {
       return state;
   }
 }
-
 
 const rootReducer = combineReducers({
   walletInfo: walletInfoReducer,
