@@ -224,3 +224,10 @@ const defaultDebtOrderParams = {
     "v": 0
   },
 }
+
+export const repayLoan = (issuanceHash, amount, token) => {
+  console.log("repayLoan")
+  console.log("issuanceHash:", issuanceHash)
+  console.log("amount:", amount)
+  console.log("token:", token)
+}

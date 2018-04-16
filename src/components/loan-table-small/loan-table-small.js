@@ -36,7 +36,7 @@ function renderRows({ rows, handleRepay, repayAvailable }) {
           {
             repayAvailable &&
             <td className="loan-table-small__table-cell">
-              <button onClick={handleRepay} className="table-btn">Repay</button>
+              <button onClick={() => handleRepay(row)} className="table-btn">Repay</button>
             </td>
           }
           <td className="loan-table-small__table-cell"><strong>{row.interestRate.toString()}</strong> %</td>
