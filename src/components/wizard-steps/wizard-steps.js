@@ -11,7 +11,7 @@ class WizardSteps extends Component {
       <Fragment key={number}>
         {(number > 1) && (<div className="wizard__step-separator"></div>)}
         <div
-          className={"wizard__step " + (isCurrentStep ? "wizard__step_current " : "") + (isPassedStep ? "wizard__step_done " : "")}>
+          className={"wizard__step " + (isCurrentStep && !isLastStep ? "wizard__step_current " : "") + (isPassedStep ? "wizard__step_done " : "")}>
           {isPassedStep && <div className="wizard__step-icon"><CheckIcon color="#18253E" size="30px"/></div>}
           <div className="wizard__step-info">
             {name}
