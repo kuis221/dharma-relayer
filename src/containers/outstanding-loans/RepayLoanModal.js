@@ -4,6 +4,7 @@ import { SUPPORTED_TOKENS } from "../../common/api/config";
 import "./repay-modal.css"
 import { connect } from "react-redux";
 import { selectCurrency, getWalletInfo } from '../../actions';
+import Spinner from "../../components/spinner/spinner"
 
 const initialState = {
   amount: "",
@@ -38,12 +39,9 @@ class RepayLoanModal extends React.Component {
   }
 
   render() {
-    const { loan, handleClose, isOpen, amount, selectedCurrency } = this.props
+    const { loan, handleClose, isOpen, amount, selectedCurrency, isLoading } = this.props
     const amountString =
       amount && (amount.isInteger() ? amount.toFormat() : amount.toFormat(5))
-
-    console.log("this.props")
-    console.log(this.props)
 
     return (
       <Modal show={isOpen} size="md" onModalClosed={handleClose}>
@@ -96,7 +94,16 @@ class RepayLoanModal extends React.Component {
                     className={`confirm__btn confirm__btn_confirm ${!this.state.amount ? "disabled" : ""}`}
                     onClick={this.handleRepay}
                   >
-                    MAKE REPAYMENT
+                    {
+                      isLoading
+                        ? (
+                        <div className="confirm-btn-spinner">
+                          <Spinner size="13px"/>
+                        </div>)
+                        : <span>
+                        MAKE REPAYMENT
+                      </span>
+                    }
                   </button>
                 </div>
               </div>

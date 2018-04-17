@@ -18,6 +18,7 @@ import fillLoanReducer from './fillLoanReducer';
 import tokenBalancesReducer from './tokenBalancesReducer';
 import debtOrderConfirmationReducer from './debtOrderConfirmationReducer';
 import { SUPPORTED_TOKENS } from '../common/api/config';
+import repayLoanReducer from "./repayLoanReducer";
 
 function walletInfoReducer(state = {
   address: getDefaultAccount(),
@@ -53,6 +54,7 @@ const rootReducer = combineReducers({
   fundConfirmation: fundConfirmationReducer,
   placeLoan: placeLoanReducer,
   fillLoan: fillLoanReducer,
+  repayLoan: repayLoanReducer,
   tokenBalances: tokenBalancesReducer,
   form: formReducer
 });

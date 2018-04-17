@@ -1,9 +1,16 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { fetchMyOutstandingLoans, setMyOutstandingLoansOffset } from '../../actions';
+import {
+  fetchMyOutstandingLoans,
+  setMyOutstandingLoansOffset,
+  repayLoanInit,
+  repayLoanSuccess,
+  repayLoanFail,
+} from '../../actions';
 import LoanTableSmall from '../../components/loan-table-small/loan-table-small.js';
 import RepayLoanModal from './RepayLoanModal'
 import { repayLoan } from "../../common/services/dharmaService";
+import {} from "../../actions/repayLoan";
 
 const pageSize = 5;
 
@@ -19,7 +26,6 @@ class OutstandingLoans extends Component {
   state = {
     loan: null,
     isRepayModalOpened: false,
-    loading: false,
   }
 
   constructor(props) {
@@ -63,15 +69,15 @@ class OutstandingLoans extends Component {
   }
 
   onRepay = ({ issuanceHash, amount, token }) => {
-    this.setState({ loading: true })
+    this.props.repayLoanInit()
     repayLoan(issuanceHash, amount, token)
       .then(loan => {
         this.handleCloseModal()
-        this.setState({ loading: false })
+        this.props.repayLoanSuccess(loan)
       })
       .catch(err => {
         console.error(err)
-        this.setState({ loading: false })
+        this.props.repayLoanFail(err)
       })
   }
 
@@ -108,6 +114,7 @@ class OutstandingLoans extends Component {
         <RepayLoanModal
           loan={this.state.loan}
           isOpen={this.state.isRepayModalOpened}
+          isLoading={this.props.repayLoanLoading}
           handleClose={this.handleCloseModal}
           onRepay={this.onRepay}
         />
@@ -116,14 +123,21 @@ class OutstandingLoans extends Component {
   }
 }
 
-let mapStateToProps = ({ myOutstandingLoans:{ values, isLoading, offset, showPaging, totalItemsCount } }) => ({
+let mapStateToProps = ({ myOutstandingLoans:{ values, isLoading, offset, showPaging, totalItemsCount }, repayLoan }) => ({
   myOutstandingLoans: values,
   isLoading,
   offset,
   showPaging,
-  totalItemsCount
+  totalItemsCount,
+  repayLoanLoading: repayLoan.isLoading,
 });
 
-let mapDispatchToProps = { fetchMyOutstandingLoans, setMyOutstandingLoansOffset };
+let mapDispatchToProps = {
+  fetchMyOutstandingLoans,
+  setMyOutstandingLoansOffset,
+  repayLoanInit,
+  repayLoanSuccess,
+  repayLoanFail,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(OutstandingLoans);
