@@ -41,26 +41,6 @@ export const convertToRelayerAmortizationFrequency = (dharmaAmortizationUnits) =
   return null;
 };
 
-export const calculateTermInDays = (dharmaAmortizationUnits, terms) => {
-  if (dharmaAmortizationUnits === DHARMA_AMORTIZATION_UNITS.DAYS) {
-    return terms;
-  }
-  if (dharmaAmortizationUnits === DHARMA_AMORTIZATION_UNITS.HOURS) {
-    return terms / 24;
-  }
-  if (dharmaAmortizationUnits === DHARMA_AMORTIZATION_UNITS.WEEKS) {
-    return terms * 7;
-  }
-  if (dharmaAmortizationUnits === DHARMA_AMORTIZATION_UNITS.MONTHS) {
-    return terms * 30;
-  }
-  if (dharmaAmortizationUnits === DHARMA_AMORTIZATION_UNITS.YEARS) {
-    return terms * 365;
-  }
-  console.error(`Relayer units corresponding to ${dharmaAmortizationUnits} weren't found`);
-  return null;
-};
-
 export const isFloat = (n) => {
   return Number(n) === n && n % 1 !== 0;
 };
