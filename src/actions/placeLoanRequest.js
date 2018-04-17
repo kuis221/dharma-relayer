@@ -23,7 +23,7 @@ export function placeLoanRequest(
     let debtOrderInfo = {
       principalTokenSymbol: currency,
       principalAmount: amount,
-      interestRate: maxInterest,
+      interestRate: maxInterest / 100,
       amortizationUnit: amortizationUnit,
       termLength: term,
       collateralTokenSymbol: collateralType,

@@ -27,12 +27,13 @@ function renderRows(rows) {
   return rows
     .sort((a, b) => a.date < b.date ? 1 : (-1))
     .map(row => {
-      let amountString = isFloat(row.principalAmount) ? row.principalAmount.toFixed(2) : row.principalAmount;
+      const amountString = isFloat(row.principalAmount) ? row.principalAmount.toFixed(2) : row.principalAmount;
+      const interestRate = row.interestRate.toNumber()
       return (
         <tr key={i++}>
           {renderDate(row)}
           <td className="loan-table-small__table-cell"><strong>{amountString}</strong> {row.principalTokenSymbol} </td>
-          <td className="loan-table-small__table-cell"><strong>{row.interestRate.toString()}</strong> %</td>
+          <td className="loan-table-small__table-cell"><strong>{row.interestRate * 100}</strong> %</td>
           <td className="loan-table-small__table-cell"><strong>{calculateTermInDays(row.amortizationUnit, row.termLength)}</strong> d</td>
         </tr>
       );
