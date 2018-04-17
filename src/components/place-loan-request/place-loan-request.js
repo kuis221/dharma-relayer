@@ -23,6 +23,7 @@ import CheckIcon from '../check-icon/check-icon.js';
 import { calculateCollateralAmount } from '../../common/services/utilities';
 import { SUPPORTED_TOKENS } from '../../common/api/config.js';
 import { DAYS, PERIODS } from "./constants"
+import ShareLoanModal from "./ShareLoanModal"
 
 const termValues = {
   1: { name: '1 day', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.DAILY] },
@@ -54,6 +55,10 @@ class PlaceLoanRequest extends Component {
     this.placeLoanRequestHandler = this.placeLoanRequestHandler.bind(this);
   }
 
+  state = {
+    isShareLoanModalOpen: false,
+  }
+
   getAmortizationPeriod = amortizationFrequency =>
     PERIODS.find(period => period.value === amortizationFrequency)
 
@@ -66,8 +71,8 @@ class PlaceLoanRequest extends Component {
     });
   }
 
-  placeLoanRequestHandler(values){
-    let {placeLoanRequest, runGlobalUpdate, changeStep, debtOrderConfirmation:{stepNumber}} = this.props;
+  placeLoanRequestHandler(values) {
+    let { placeLoanRequest, runGlobalUpdate, changeStep, debtOrderConfirmation:{ stepNumber } } = this.props;
     placeLoanRequest(values, () => {
       changeStep(stepNumber + 1);
       runGlobalUpdate();
@@ -106,26 +111,36 @@ class PlaceLoanRequest extends Component {
     this.props.changeAmortizationFrequency(target.value);
   }
 
-  renderWizardWithUnlockStep(currentStepNumber){
+  renderWizardWithUnlockStep(currentStepNumber) {
     return (
-      <WizardSteps steps={['Unlock', 'Review', 'Success']} currentStep={currentStepNumber} />
+      <WizardSteps steps={['Unlock', 'Review', 'Success']} currentStep={currentStepNumber}/>
     );
   }
 
-  renderWizardNoUnockStep(currentStepNumber){
+  renderWizardNoUnockStep(currentStepNumber) {
     return (
-      <WizardSteps steps={['Review', 'Success']} currentStep={currentStepNumber} />
+      <WizardSteps steps={['Review', 'Success']} currentStep={currentStepNumber}/>
     );
   }
 
-  renderModal(){
+  openShareModal = () =>
+    this.setState({ isShareLoanModalOpen: true })
+
+  closeShareModal = () =>
+    this.setState({ isShareLoanModalOpen: false })
+
+  handleSignedLoanRequest = () => {
+    this.openShareModal()
+  }
+
+  renderModal() {
     const { debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation, collateralType } = this.props;
     let collateralExists = debtOrderConfirmation.collateralAmount > 0;
 
     let renderUnlockStep = false;
     let renderReviewStep = false;
     let renderFinalStep = false;
-    if(debtOrderConfirmation.modalVisible){
+    if (debtOrderConfirmation.modalVisible) {
       renderUnlockStep = collateralExists && (debtOrderConfirmation.stepNumber === 1);
       renderReviewStep = (collateralExists && debtOrderConfirmation.stepNumber === 2) || (!collateralExists && debtOrderConfirmation.stepNumber === 1);
       renderFinalStep = (collateralExists && debtOrderConfirmation.stepNumber === 3) || (!collateralExists && debtOrderConfirmation.stepNumber === 2);
@@ -153,9 +168,11 @@ class PlaceLoanRequest extends Component {
             renderReviewStep &&
             <ConfirmLoanRequest
               {...debtOrderConfirmation}
-              onCancel={() => {collateralExists ? changeStep(1) : this.cancelLoanRequest()} }
+              onCancel={() => {
+                collateralExists ? changeStep(1) : this.cancelLoanRequest()
+              } }
               onConfirm={this.placeLoanRequestHandler}
-              isLoading={placeLoan.isLoading} />
+              isLoading={placeLoan.isLoading}/>
           }
           {
             renderFinalStep &&
@@ -174,7 +191,14 @@ class PlaceLoanRequest extends Component {
     return (
       <div className="loan-request-form">
         <div className="loan-request-form__header">
-          New loan request
+          New loan request <br/>
+          <a
+            className="loan-request-link"
+            href="javascript:void(0)"
+            onClick={this.handleSignedLoanRequest}
+          >
+            Already have signed loan request?
+          </a>
         </div>
         <div className="loan-request-form__row loan-request-amount">
           <div className="loan-request-form__label-wrapper">
@@ -271,6 +295,7 @@ class PlaceLoanRequest extends Component {
           </button>
         </div>
         {this.renderModal()}
+        <ShareLoanModal isOpen={this.state.isShareLoanModalOpen} handleClose={this.closeShareModal}/>
       </div>
     );
   }
