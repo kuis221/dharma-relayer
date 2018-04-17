@@ -19,6 +19,7 @@ class OutstandingLoans extends Component {
   state = {
     loan: null,
     isRepayModalOpened: false,
+    loading: false,
   }
 
   constructor(props) {
@@ -62,8 +63,16 @@ class OutstandingLoans extends Component {
   }
 
   onRepay = ({ issuanceHash, amount, token }) => {
-    this.handleCloseModal()
+    this.setState({ loading: true })
     repayLoan(issuanceHash, amount, token)
+      .then(loan => {
+        this.handleCloseModal()
+        this.setState({ loading: false })
+      })
+      .catch(err => {
+        console.error(err)
+        this.setState({ loading: false })
+      })
   }
 
   render() {
