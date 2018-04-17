@@ -26,3 +26,4 @@ export * from './setIssuedLoansOffset';
 export * from './setMyFundedLoansOffset';
 export * from './setMyOpenedLoanRequestsOffset';
 export * from './setMyOutstandingLoansOffset';
+export * from './getCollateralTokenLock';
