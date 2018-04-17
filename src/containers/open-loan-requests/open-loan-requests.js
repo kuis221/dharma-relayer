@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {fetchMyOpenedLoanRequests, setMyOpenedLoanRequestsOffset} from '../../actions';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { fetchMyOpenedLoanRequests, setMyOpenedLoanRequestsOffset } from '../../actions';
 import LoanTableSmall from '../../components/loan-table-small/loan-table-small.js';
 
 const pageSize = 5;
@@ -13,32 +13,36 @@ let startTimer = (func) => {
   }, 10000)
 };
 
-class OpenLoanRequests extends Component{
-  constructor(props){
+class OpenLoanRequests extends Component {
+  constructor(props) {
     super(props);
 
     this.getOpenLoansForCurrentPage = this.getOpenLoansForCurrentPage.bind(this);
   }
 
-  componentDidMount(){
-    let {getOpenLoansForCurrentPage} = this;
+  componentDidMount() {
+    let { getOpenLoansForCurrentPage } = this;
     getOpenLoansForCurrentPage();
     startTimer(getOpenLoansForCurrentPage);
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     destroyTimer && destroyTimer();
   }
 
-  getOpenLoansForCurrentPage(){
-    let {offset, fetchMyOpenedLoanRequests} = this.props;
-    let currentPageNum = Math.floor(offset/pageSize);
+  getOpenLoansForCurrentPage() {
+    let { offset, fetchMyOpenedLoanRequests } = this.props;
+    let currentPageNum = Math.floor(offset / pageSize);
 
     fetchMyOpenedLoanRequests(pageSize * currentPageNum, pageSize);
   }
 
-  render(){
-    let {myOpenLoanRequests, showPaging, isLoading, offset, totalItemsCount, setMyOpenedLoanRequestsOffset, fetchMyOpenedLoanRequests} = this.props;
+  cancelLoanRequest = () => {
+    console.log("cancelLoanRequest")
+  }
+
+  render() {
+    let { myOpenLoanRequests, showPaging, isLoading, offset, totalItemsCount, setMyOpenedLoanRequestsOffset, fetchMyOpenedLoanRequests } = this.props;
 
     let rows = myOpenLoanRequests.map(loan => ({
       date: new Date(loan.creationTime),
@@ -46,7 +50,7 @@ class OpenLoanRequests extends Component{
       principalTokenSymbol: loan.principalTokenSymbol,
       termLength: loan.termLength.toNumber(),
       amortizationUnit: loan.amortizationUnit,
-      interestRate:loan.interestRate
+      interestRate: loan.interestRate
     }));
 
     return (
@@ -58,16 +62,18 @@ class OpenLoanRequests extends Component{
         showPaging={showPaging}
         offset={offset}
         totalItemsCount={totalItemsCount}
+        availableForDelete={true}
+        onDelete={this.cancelLoanRequest}
         pageSize={pageSize}
         onPageClick={(pageNum) => {
-                        setMyOpenedLoanRequestsOffset(pageSize * pageNum);
-                        fetchMyOpenedLoanRequests(pageSize * pageNum, pageSize);
-                    }}/>
+          setMyOpenedLoanRequestsOffset(pageSize * pageNum);
+          fetchMyOpenedLoanRequests(pageSize * pageNum, pageSize);
+        }}/>
     );
   }
 }
 
-let mapStateToProps = ({myOpenLoanRequests:{values, isLoading, offset, showPaging, totalItemsCount}}) => ({
+let mapStateToProps = ({ myOpenLoanRequests:{ values, isLoading, offset, showPaging, totalItemsCount } }) => ({
   myOpenLoanRequests: values,
   isLoading,
   offset,
@@ -75,6 +81,6 @@ let mapStateToProps = ({myOpenLoanRequests:{values, isLoading, offset, showPagin
   totalItemsCount
 });
 
-let mapDispatchToProps = {fetchMyOpenedLoanRequests, setMyOpenedLoanRequestsOffset};
+let mapDispatchToProps = { fetchMyOpenedLoanRequests, setMyOpenedLoanRequestsOffset };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OpenLoanRequests);
