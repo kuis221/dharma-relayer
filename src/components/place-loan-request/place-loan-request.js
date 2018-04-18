@@ -207,7 +207,7 @@ class PlaceLoanRequest extends Component {
               }
             </Field>
             <Field name="term_period"
-                   className="loan-request-form__select loan-request-term-amount"
+                   className="loan-request-form__select"
                    component="select"
                    onChange={this.termChange.bind(this)}>
               {
