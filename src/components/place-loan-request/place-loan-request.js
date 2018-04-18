@@ -22,6 +22,7 @@ import WizardSteps from '../wizard-steps/wizard-steps.js';
 import { SUPPORTED_TOKENS } from '../../common/api/config.js';
 import { DAYS, PERIODS } from "./constants"
 import ShareLoanModal from "./ShareLoanModal"
+import { convertToRelayer } from "../../utils/relayer-adapter";
 
 const termValues = {
   1: { name: '1 day', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.DAILY] },
@@ -136,8 +137,15 @@ class PlaceLoanRequest extends Component {
   submitShareLoan = (e) => {
     e.preventDefault()
     const { requestJson } = e.target.elements
-    console.log("requestJson")
-    console.log(requestJson && requestJson.value)
+    try {
+      if (requestJson) {
+        const resp = convertToRelayer(requestJson.value)
+        console.log("resp")
+        console.log(resp)
+      }
+    } catch (err) {
+      alert(err)
+    }
   }
 
   renderModal() {
