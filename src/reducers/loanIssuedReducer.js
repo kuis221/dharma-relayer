@@ -1,5 +1,4 @@
 import { GET_LOAN_ISSUED_SUCCESS, SET_ISSUED_LOANS_OFFSET } from '../actions';
-import {calculateTermInDays} from '../common/services/utilities';
 
 export default function (state = {
   isLoading: true,
@@ -22,7 +21,8 @@ export default function (state = {
             amount: loan.dharmaDebtOrder.principalAmount.toNumber(),
             token: loan.dharmaDebtOrder.principalTokenSymbol,
             date: loan.issuanceBlockTimeParsed.toLocaleDateString() + " " + loan.issuanceBlockTimeParsed.toLocaleTimeString(),
-            term: calculateTermInDays(loan.dharmaDebtOrder.amortizationUnit, loan.dharmaDebtOrder.termLength.toNumber()),
+            termLength: loan.dharmaDebtOrder.termLength.toNumber(),
+            amortizationUnit: loan.dharmaDebtOrder.amortizationUnit,
             interest: loan.dharmaDebtOrder.interestRate.toNumber(),
             issuanceHash: loan.issuanceHash
           }))
