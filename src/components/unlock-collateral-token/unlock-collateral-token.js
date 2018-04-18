@@ -1,19 +1,18 @@
-import React, {Component} from 'react';
-import {calculateNumberOfPayments, calculateRepaymentAmount, calculateTotalPaymentAmount, isFloat} from '../../common/services/utilities';
+import React, { Component } from 'react';
 import Confirm from '../confirm/confirm';
 import './unlock-collateral-token.css';
 import Slider from '../slider/slider.js';
 
-class UnlockCollateralToken extends Component{
+class UnlockCollateralToken extends Component {
 
-  onToggleChange(e){
+  onToggleChange(e) {
     let unlockValue = e.target.checked;
-    let {collateralType, unlockCollateralToken, collateralAmount} = this.props;
+    let { collateralType, unlockCollateralToken, collateralAmount } = this.props;
     unlockCollateralToken(collateralType, collateralAmount, unlockValue);
   }
 
-  render(){
-    let {onConfirm, onCancel, collateralTokenUnlocked, unlockInProgress, collateralType} = this.props;
+  render() {
+    let { onConfirm, onCancel, collateralTokenUnlocked, unlockInProgress, collateralType } = this.props;
 
     return (
       <div className="unlock-tokens">

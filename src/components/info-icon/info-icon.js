@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React from 'react';
 import './info-icon.css';
 import '../../common/styles/tooltip.css';
 

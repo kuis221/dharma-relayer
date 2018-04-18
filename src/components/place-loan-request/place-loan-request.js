@@ -19,8 +19,6 @@ import ConfirmLoanRequest from '../confirm-loan-request/confirm-loan-request';
 import UnlockCollateralToken from '../unlock-collateral-token/unlock-collateral-token.js';
 import PlaceLoanSuccess from '../place-loan-success/place-loan-success.js';
 import WizardSteps from '../wizard-steps/wizard-steps.js';
-import CheckIcon from '../check-icon/check-icon.js';
-import { calculateCollateralAmount } from '../../common/services/utilities';
 import { SUPPORTED_TOKENS } from '../../common/api/config.js';
 import { DAYS, PERIODS } from "./constants"
 
@@ -41,6 +39,9 @@ const floatOnly = (value) => {
   v = v.slice(0, v.indexOf('.') >= 0 ? v.indexOf('.') + 6 : undefined)
   return v
 };
+
+const percentNormalize = value => floatOnly(value) / 100;
+const percentFormat = value => value * 100;
 const required = value => (value ? false : true);
 
 class PlaceLoanRequest extends Component {
@@ -119,7 +120,7 @@ class PlaceLoanRequest extends Component {
   }
 
   renderModal(){
-    const { debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation, collateralType } = this.props;
+    const { debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation } = this.props;
     let collateralExists = debtOrderConfirmation.collateralAmount > 0;
 
     let renderUnlockStep = false;
@@ -229,12 +230,13 @@ class PlaceLoanRequest extends Component {
           </div>
           <div className="loan-request-form__input-wrapper">
             <Field
-              name="maxInterest"
+              name="interestRate"
               className="loan-request-form__input"
               placeholder="per loan term, %"
               component="input"
               validate={required}
-              normalize={floatOnly}/>
+              format={percentFormat}
+              normalize={percentNormalize}/>
           </div>
         </div>
 
@@ -322,6 +324,7 @@ let mapDispatchToProps = (dispatch) => ({
 export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
   form: 'LoanRequestForm',
   initialValues: {
+    interestRate: 0.01,
     term: 7,
     amortizationFrequency: RELAYER_AMORTIZATION_FREQUENCIES["HOURLY"],
     currency: SUPPORTED_TOKENS[0],
