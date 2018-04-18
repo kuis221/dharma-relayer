@@ -4,7 +4,7 @@ import { Modal, ModalBody } from '../modal/modal';
 const ShareLoanModal = ({ handleClose, isOpen, onSubmit }) => (
   <Modal show={isOpen} size="md" onModalClosed={handleClose}>
     <ModalBody>
-      <div className="confirm">
+      <form onSubmit={onSubmit} className="confirm">
         <div className="confirm__row">
           <div className="confirm__header">
             <h1>
@@ -26,13 +26,10 @@ const ShareLoanModal = ({ handleClose, isOpen, onSubmit }) => (
           />
         </div>
         <br/>
-        <button
-          className={`confirm__btn confirm__btn_confirm`}
-          onClick={onSubmit}
-        >
+        <button className="confirm__btn confirm__btn_confirm">
           Continue
         </button>
-      </div>
+      </form>
     </ModalBody>
   </Modal>
 )

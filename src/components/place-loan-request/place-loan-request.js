@@ -130,8 +130,11 @@ class PlaceLoanRequest extends Component {
   closeShareModal = () =>
     this.setState({ isShareLoanModalOpen: false })
 
-  handleSignedLoanRequest = () => {
+  handleSignedLoanRequest = () =>
     this.openShareModal()
+
+  submitShareLoan = (e) => {
+    e.preventDefault()
   }
 
   renderModal() {
@@ -297,7 +300,11 @@ class PlaceLoanRequest extends Component {
           </button>
         </div>
         {this.renderModal()}
-        <ShareLoanModal isOpen={this.state.isShareLoanModalOpen} handleClose={this.closeShareModal}/>
+        <ShareLoanModal
+          isOpen={this.state.isShareLoanModalOpen}
+          handleClose={this.closeShareModal}
+          onSubmit={this.submitShareLoan}
+        />
       </div>
     );
   }
