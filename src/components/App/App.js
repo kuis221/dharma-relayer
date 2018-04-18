@@ -7,7 +7,10 @@ import './App.css';
 import UserInfo from '../user-info/user-info.js';
 import LoanRequests from '../../containers/loan-requests/loan-requests';
 import IssuedLoans from '../../containers/issued-loans/issued-loans';
-import {HOST_URL} from '../../common/api/config'
+import OpenLoanRequests from '../../containers/open-loan-requests/open-loan-requests';
+import OutstandingLoans from '../../containers/outstanding-loans/outstanding-loans';
+import FundedLoans from '../../containers/funded-loans/funded-loans';
+import {HOST_URL} from '../../common/api/config';
 
 export const store = createStore(
   rootReducer,
@@ -30,6 +33,17 @@ class App extends Component {
               </div>
               <div className="app__content-right col-sm">
                 <IssuedLoans />
+              </div>
+            </div>
+            <div className="app__content-bottom row flex-sm-nowrap">
+              <div className="app__small-table">
+                <OpenLoanRequests />
+              </div>
+              <div className="app__small-table">
+                <OutstandingLoans />
+              </div>
+              <div className="app__small-table">
+                <FundedLoans />
               </div>
             </div>
           </div>
