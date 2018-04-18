@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import Confirm from '../confirm/confirm';
 import { calculateRepaymentAmount, calculateTotalPaymentAmount, convertToRelayerAmortizationFrequency, isFloat } from '../../common/services/utilities';
-import { RELAYER_AMORTIZATION_FREQUENCIES, DHARMA_AMORTIZATION_UNITS } from '../../common/amortizationFrequencies';
-
-
 
 class ConfirmFund extends Component {
   render() {

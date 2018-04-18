@@ -34,7 +34,7 @@ function renderRows(rows) {
         <tr key={i++}>
           {renderDate(row)}
           <td className="loan-table-small__table-cell"><strong>{amountString}</strong> {row.principalTokenSymbol} </td>
-          <td className="loan-table-small__table-cell"><strong>{row.interestRate * 100}</strong> %</td>
+          <td className="loan-table-small__table-cell"><strong>{interestRate * 100}</strong> %</td>
           <td className="loan-table-small__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit}</td>
         </tr>
       );

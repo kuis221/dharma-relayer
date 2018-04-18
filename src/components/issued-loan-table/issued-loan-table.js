@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './issued-loan-table.css';
 import { isFloat, formatLoanscanLink } from '../../common/services/utilities';
 import { SHOW_LOANSCAN_LINK } from '../../common/api/config';

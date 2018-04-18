@@ -1,11 +1,11 @@
-import {getWalletBalanceAsync, getDefaultAccount} from '../common/services/web3Service';
-import {getTokenBalanceAsync} from '../common/services/tokenService';
+import { getDefaultAccount } from '../common/services/web3Service';
+import { getTokenBalanceAsync } from '../common/services/tokenService';
 
 export const GET_TOKEN_BALANCE = 'GET_TOKEN_BALANCE';
 export const GET_TOKEN_BALANCE_SUCCESS = 'GET_TOKEN_BALANCE_SUCCESS';
 export const GET_TOKEN_BALANCE_FAIL = 'GET_TOKEN_BALANCE_FAIL';
 
-export function getTokenBalance(token){
+export function getTokenBalance(token) {
   return dispatch => {
     dispatch({
       type: GET_TOKEN_BALANCE

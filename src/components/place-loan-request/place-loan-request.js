@@ -19,7 +19,6 @@ import ConfirmLoanRequest from '../confirm-loan-request/confirm-loan-request';
 import UnlockCollateralToken from '../unlock-collateral-token/unlock-collateral-token.js';
 import PlaceLoanSuccess from '../place-loan-success/place-loan-success.js';
 import WizardSteps from '../wizard-steps/wizard-steps.js';
-import CheckIcon from '../check-icon/check-icon.js';
 import { SUPPORTED_TOKENS } from '../../common/api/config.js';
 import { DAYS, PERIODS } from "./constants"
 
@@ -121,7 +120,7 @@ class PlaceLoanRequest extends Component {
   }
 
   renderModal(){
-    const { debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation, collateralType } = this.props;
+    const { debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation } = this.props;
     let collateralExists = debtOrderConfirmation.collateralAmount > 0;
 
     let renderUnlockStep = false;
