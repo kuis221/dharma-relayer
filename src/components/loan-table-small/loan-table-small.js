@@ -1,6 +1,6 @@
 import React from 'react';
 import './loan-table-small.css';
-import { isFloat, formatLoanscanLink } from '../../common/services/utilities';
+import { isFloat, formatLoanscanLink, calculateTotalPaymentAmount } from '../../common/services/utilities';
 import { SHOW_LOANSCAN_LINK } from '../../common/api/config';
 import Paging from '../../components/paging/paging.js';
 import Spinner from '../../components/spinner/spinner.js';
@@ -28,8 +28,13 @@ function renderRows({ rows, handleRepay, repayAvailable }) {
   return rows
     .sort((a, b) => a.date < b.date ? 1 : (-1))
     .map(row => {
-      const amountString = isFloat(row.principalAmount) ? row.principalAmount.toFixed(2) : row.principalAmount;
-      const interestRate = row.interestRate.toNumber()
+
+      const amount = row.principalAmount;
+      const amountString = isFloat(amount) ? amount.toFixed(2) : amount;
+      const interestRate = row.interestRate.toNumber();
+      const totalRepayment = calculateTotalPaymentAmount(amount, interestRate);
+      const repaymentString = isFloat(totalRepayment) ? totalRepayment.toFixed(2) : totalRepayment;
+
       return (
         <tr key={i++}>
           {renderDate(row)}
@@ -42,6 +47,7 @@ function renderRows({ rows, handleRepay, repayAvailable }) {
           }
           <td className="loan-table-small__table-cell"><strong>{interestRate * 100}</strong> %</td>
           <td className="loan-table-small__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit}</td>
+          <td className="loan-table-small__table-cell"><strong>{repaymentString}</strong> {row.principalTokenSymbol}</td>
         </tr>
       );
     });
@@ -87,6 +93,7 @@ function LoanTableSmall(props) {
             }
             <th className="loan-table-small__table-header" title="Interest rate per loan term">Interest</th>
             <th className="loan-table-small__table-header" title="Loan term">Term</th>
+            <th className="loan-table-small__table-header" title="Total Repayment">Total Repayment</th>
           </tr>
           </thead>
           <tbody className="loan-table-small__table-body scrollable-table__table-body scrollable">

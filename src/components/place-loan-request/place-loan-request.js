@@ -218,10 +218,8 @@ class PlaceLoanRequest extends Component {
           <div className="loan-request-form__label-wrapper">
             <label className="loan-request-form__label">Payment</label>
           </div>
-          <div className="loan-request-form__select-wrapper">
-            <Field disabled name="amortizationFrequency" className="loan-request-form__select" component="select">
-              <option value={amortizationFrequency}>{amortizationFrequency}</option>
-            </Field>
+          <div className="loan-request-form__input-wrapper">
+            <input disabled value={amortizationFrequency || ""} className="loan-request-form__input" />
           </div>
         </div>
         <div className="loan-request-form__row">
