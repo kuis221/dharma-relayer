@@ -47,7 +47,8 @@ function renderRows({ rows, handleRepay, repayAvailable }) {
           }
           <td className="loan-table-small__table-cell"><strong>{interestRate * 100}</strong> %</td>
           <td className="loan-table-small__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit}</td>
-          <td className="loan-table-small__table-cell"><strong>{repaymentString}</strong> {row.principalTokenSymbol}</td>
+          <td className="loan-table-small__table-cell"><strong>{repaymentString}</strong> {row.principalTokenSymbol}
+          </td>
         </tr>
       );
     });
@@ -76,7 +77,7 @@ function LoanTableSmall(props) {
   }
   return (
     <React.Fragment>
-      <div className="loan-table-small scrollable-table">
+      <div className={`loan-table-small scrollable-table ${props.containerClassName}`}>
         <div className="loan-table-small__header">
           {props.header}
         </div>

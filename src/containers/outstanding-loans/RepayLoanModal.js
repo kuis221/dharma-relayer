@@ -8,7 +8,6 @@ import Spinner from "../../components/spinner/spinner"
 
 const initialState = {
   amount: "",
-  token: SUPPORTED_TOKENS[0]
 }
 
 class RepayLoanModal extends React.Component {
@@ -29,6 +28,7 @@ class RepayLoanModal extends React.Component {
   handleRepay = () => {
     this.props.onRepay({
       issuanceHash: this.props.loan.issuanceHash,
+      token: this.props.loan.principalTokenSymbol,
       ...this.state,
     })
     this.setState(initialState)
@@ -75,12 +75,11 @@ class RepayLoanModal extends React.Component {
                   value={this.state.amount}
                   onChange={this.onAmountChange}
                 />
-                <select name="token" onChange={this.onTokenChange}>
-                  {
-                    SUPPORTED_TOKENS.map(token =>
-                      <option key={token} value={token}>{token}</option>)
-                  }
-                </select>
+                <input type="text"
+                       className="repay-modal-token-symbol"
+                       disabled
+                       defaultValue={loan.principalTokenSymbol}
+                />
               </div>
               <div className="confirm__buttons">
                 <div className="confirm__btn-wrapper">
