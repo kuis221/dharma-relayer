@@ -1,7 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { fetchMyOutstandingLoans, setMyOutstandingLoansOffset } from '../../actions';
+import {
+  fetchMyOutstandingLoans,
+  setMyOutstandingLoansOffset,
+  repayLoanInit,
+  repayLoanSuccess,
+  repayLoanFail,
+} from '../../actions';
 import LoanTableSmall from '../../components/loan-table-small/loan-table-small.js';
+import RepayLoanModal from './RepayLoanModal'
+import { repayLoan } from "../../common/services/dharmaService";
+import {} from "../../actions/repayLoan";
 
 const pageSize = 5;
 
@@ -14,7 +23,12 @@ let startTimer = (func) => {
 };
 
 class OutstandingLoans extends Component {
-  constructor(props){
+  state = {
+    loan: null,
+    isRepayModalOpened: false,
+  }
+
+  constructor(props) {
     super(props);
 
     this.getOutstandingLoansForCurrentPage = this.getOutstandingLoansForCurrentPage.bind(this);
@@ -30,15 +44,46 @@ class OutstandingLoans extends Component {
     destroyTimer && destroyTimer();
   }
 
-  getOutstandingLoansForCurrentPage(){
-    let {offset, fetchMyOutstandingLoans} = this.props;
-    let currentPageNum = Math.floor(offset/pageSize);
+  getOutstandingLoansForCurrentPage() {
+    let { offset, fetchMyOutstandingLoans } = this.props;
+    let currentPageNum = Math.floor(offset / pageSize);
 
     fetchMyOutstandingLoans(pageSize * currentPageNum, pageSize);
   }
 
+  handleOpenModal = () =>
+    this.setState(prevState => ({
+        isRepayModalOpened: true
+      })
+    )
+
+  handleCloseModal = () =>
+    this.setState(prevState => ({
+        isRepayModalOpened: false
+      })
+    )
+
+  handleRepayModal = loan => {
+    this.setState(prevState => ({ loan }))
+    this.handleOpenModal()
+  }
+
+  onRepay = ({ issuanceHash, amount, token }) => {
+    this.props.repayLoanInit()
+    repayLoan(issuanceHash, amount, token)
+      .then(loan => {
+        this.handleCloseModal()
+        this.props.repayLoanSuccess(loan)
+      })
+      .catch(err => {
+        console.error(err)
+        alert(err)
+        this.props.repayLoanFail(err)
+      })
+  }
+
   render() {
-    let {myOutstandingLoans, showPaging, isLoading, offset, totalItemsCount, setMyOutstandingLoansOffset, fetchMyOutstandingLoans} = this.props;
+    let { myOutstandingLoans, showPaging, isLoading, offset, totalItemsCount, setMyOutstandingLoansOffset, fetchMyOutstandingLoans } = this.props;
 
     let rows = myOutstandingLoans.map(loan => ({
       date: new Date(loan.issuanceBlockTime),
@@ -51,31 +96,50 @@ class OutstandingLoans extends Component {
     }));
 
     return (
-      <LoanTableSmall
-        header="My outstanding loans"
-        dateColumnHeader="Date loan issued"
-        rows={rows}
-        isLoading={isLoading}
-        showPaging={showPaging}
-        offset={offset}
-        totalItemsCount={totalItemsCount}
-        pageSize={pageSize}
-        onPageClick={(pageNum) => {
-                        setMyOutstandingLoansOffset(pageSize * pageNum);
-                        fetchMyOutstandingLoans(pageSize * pageNum, pageSize);
-                    }}/>
+      <Fragment>
+        <LoanTableSmall
+          header="My outstanding loans"
+          containerClassName="loan-table-small-with-repay"
+          dateColumnHeader="Date loan issued"
+          repayAvailable={true}
+          handleRepay={this.handleRepayModal}
+          rows={rows}
+          isLoading={isLoading}
+          showPaging={showPaging}
+          offset={offset}
+          totalItemsCount={totalItemsCount}
+          pageSize={pageSize}
+          onPageClick={(pageNum) => {
+            setMyOutstandingLoansOffset(pageSize * pageNum);
+            fetchMyOutstandingLoans(pageSize * pageNum, pageSize);
+          }}/>
+        <RepayLoanModal
+          loan={this.state.loan}
+          isOpen={this.state.isRepayModalOpened}
+          isLoading={this.props.repayLoanLoading}
+          handleClose={this.handleCloseModal}
+          onRepay={this.onRepay}
+        />
+      </Fragment>
     );
   }
 }
 
-let mapStateToProps = ({ myOutstandingLoans:{values, isLoading, offset, showPaging, totalItemsCount} }) => ({
+let mapStateToProps = ({ myOutstandingLoans:{ values, isLoading, offset, showPaging, totalItemsCount }, repayLoan }) => ({
   myOutstandingLoans: values,
   isLoading,
   offset,
   showPaging,
-  totalItemsCount
+  totalItemsCount,
+  repayLoanLoading: repayLoan.isLoading,
 });
 
-let mapDispatchToProps = { fetchMyOutstandingLoans, setMyOutstandingLoansOffset };
+let mapDispatchToProps = {
+  fetchMyOutstandingLoans,
+  setMyOutstandingLoansOffset,
+  repayLoanInit,
+  repayLoanSuccess,
+  repayLoanFail,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(OutstandingLoans);

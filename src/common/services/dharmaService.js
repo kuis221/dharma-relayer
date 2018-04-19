@@ -148,6 +148,22 @@ export async function getSupportedTokens() {
   return res;
 }
 
+export async function repayLoan(issuanceHash, amount, token) {
+  const tokenAddress = await tokenService.getTokenAddressBySymbolAsync(token);
+  const rawAmount = await tokenService.convertFromHumanReadable(amount, token);
+  const txHash = await dharma.servicing.makeRepayment(issuanceHash, rawAmount, tokenAddress);
+  return await dharma.blockchain.awaitTransactionMinedAsync(txHash, 1000, 60000);
+}
+
+export async function getRemainingRepaymentValue(debtOrder) {
+  const repaid = await dharma.servicing.getValueRepaid(debtOrder.issuanceHash);
+  const principal = await tokenService.convertFromHumanReadable(debtOrder.principalAmount, debtOrder.principalTokenSymbol);
+  const totalRepayments = principal.times(debtOrder.interestRate.plus(1));
+  const res = await tokenService.convertToHumanReadable(totalRepayments.sub(repaid), debtOrder.principalTokenSymbol);
+
+  return res;
+}
+
 async function createSimpleInterestLoan(debtOrderInfo) {
   const tokenRegistry = await dharma.contracts.loadTokenRegistry();
   const principalToken = await tokenRegistry.getTokenAddressBySymbol.callAsync(debtOrderInfo.principalTokenSymbol);
