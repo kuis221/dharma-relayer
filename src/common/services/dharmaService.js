@@ -155,6 +155,17 @@ export async function repayLoan(issuanceHash, amount, token) {
   return await dharma.blockchain.awaitTransactionMinedAsync(txHash, 1000, 60000);
 }
 
+export async function getRemainingRepaymentValue(issuanceHash, token) {
+  const expected = await dharma.servicing.getExpectedValueRepaid(issuanceHash, Date.now() / 1000);
+  const repaid = await dharma.servicing.getValueRepaid(issuanceHash);
+  const res = await tokenService.convertToHumanReadable(expected.sub(repaid), token);
+
+  if (res.isNegative())
+    return new BigNumber(0);
+
+  return res;
+}
+
 async function createSimpleInterestLoan(debtOrderInfo) {
   const tokenRegistry = await dharma.contracts.loadTokenRegistry();
   const principalToken = await tokenRegistry.getTokenAddressBySymbol.callAsync(debtOrderInfo.principalTokenSymbol);
