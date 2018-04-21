@@ -30,7 +30,11 @@ export function placeLoanRequest(
       collateralAmount: collateralAmount
     };
     return createDebtOrder(debtOrderInfo)
-      .then(debtOrder => debtsApi.post(debtOrder))
+      .then(debtOrder => {
+        console.log("debtOrder")
+        console.log(debtOrder)
+        debtsApi.post(debtOrder)
+      })
       .then(resp => {
         dispatch({
           type: PLACE_LOAN_SUCCESS
