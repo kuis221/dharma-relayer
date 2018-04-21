@@ -1,6 +1,7 @@
 import React from 'react';
 import './issued-loan-table.css';
 import { isFloat, formatLoanscanLink } from '../../common/services/utilities';
+import BigNumber from 'bignumber.js';
 import { SHOW_LOANSCAN_LINK } from '../../common/api/config';
 
 function redirectToLoanscan(issuanceHash){
@@ -11,7 +12,7 @@ function renderRows(rows) {
     let i = 0;
 
     return rows.map(row => {
-        const amountString = isFloat(row.amount) ? row.amount.toFixed(2) : row.amount;
+        const amountString = new BigNumber(row.amount).toFormat(3);
         const rowIsClickable = SHOW_LOANSCAN_LINK && row.issuanceHash;
         const rowClassName = rowIsClickable ? "issued-table__clickable-row" : "";
 
@@ -20,7 +21,7 @@ function renderRows(rows) {
                 <td className="issued-table__table-cell">{row.date}</td>
                 <td className="issued-table__table-cell"><strong>{amountString}</strong> {row.token} </td>
                 <td className="issued-table__table-cell"><strong>{row.interest * 100}</strong> %</td>
-                <td className="issued-table__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit}</td>
+                <td className="issued-table__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit.slice(0,1)}</td>
             </tr>
         );
     });
@@ -38,7 +39,7 @@ function IssuedLoanTable(props) {
                         <th className="issued-table__table-header" title="Date loan issued">Date</th>
                         <th className="issued-table__table-header" title="Loan amount">Amount</th>
                         <th className="issued-table__table-header" title="Interest rate per loan term">Interest</th>
-                        <th className="issued-table__table-header" title="Loan term">Term</th>
+                        <th className="issued-table__table-header" title="Loan term">Loan term</th>
                     </tr>
                 </thead>
                 <tbody className="issued-table__table-body scrollable-table__table-body scrollable">
