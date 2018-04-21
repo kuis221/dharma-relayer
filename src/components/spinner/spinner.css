@@ -4,6 +4,13 @@
   text-align: center;
 }
 
+.spinner.inline {
+  margin: 0 5px;
+  height: auto;
+  text-align: left;
+  display: inline-block;
+}
+
 .spinner > div {
   width: 18px;
   height: 18px;
