@@ -6,23 +6,17 @@ import Paging from '../../components/paging/paging.js';
 import Spinner from '../../components/spinner/spinner.js';
 
 
-function renderDate(row) {
-
-  if (SHOW_LOANSCAN_LINK && row.issuanceHash) {
-    return (
-      <td className="loan-table-small__table-cell">
-        <a href={formatLoanscanLink(row.issuanceHash)}
-           target="_blank">{row.date.toLocaleDateString()} {row.date.toLocaleTimeString()}</a>
-      </td>
-    )
-  }
-
-  return (
-    <td className="loan-table-small__table-cell">{row.date.toLocaleDateString()} {row.date.toLocaleTimeString()}</td>
-  )
+function redirectToLoanscan(issuanceHash){
+  window.open(formatLoanscanLink(issuanceHash), "_blank");
 }
 
-function renderRows({ rows, handleRepay, repayAvailable }) {
+
+function handleRepayInternal(handleRepay, row, event){
+  handleRepay(row);
+  event.stopPropagation();
+}
+
+function renderRows({ rows, handleRepay, repayAvailable, sellLoanAvailable }) {
   let i = 0;
 
   return rows
@@ -34,21 +28,28 @@ function renderRows({ rows, handleRepay, repayAvailable }) {
       const interestRate = row.interestRate.toNumber();
       const totalRepayment = calculateTotalPaymentAmount(amount, interestRate);
       const repaymentString = isFloat(totalRepayment) ? totalRepayment.toFixed(2) : totalRepayment;
+      const rowIsClickable = SHOW_LOANSCAN_LINK && row.issuanceHash;
+      const rowClassName = rowIsClickable ? "loan-table-small__clickable-row" : "";
 
       return (
-        <tr key={i++}>
-          {renderDate(row)}
+        <tr key={i++} className={rowClassName} onClick={() => {rowIsClickable && redirectToLoanscan(row.issuanceHash)}}>
+          <td className="loan-table-small__table-cell">{row.date.toLocaleDateString()} {row.date.toLocaleTimeString()}</td>
           <td className="loan-table-small__table-cell"><strong>{amountString}</strong> {row.principalTokenSymbol} </td>
           {
             repayAvailable &&
             <td className="loan-table-small__table-cell">
-              <button onClick={() => handleRepay(row)} className="table-btn">Repay</button>
+              <button onClick={(event) => handleRepayInternal(handleRepay, row, event)} className="loan-table-small__btn">Repay</button>
             </td>
           }
           <td className="loan-table-small__table-cell"><strong>{interestRate * 100}</strong> %</td>
           <td className="loan-table-small__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit}</td>
-          <td className="loan-table-small__table-cell"><strong>{repaymentString}</strong> {row.principalTokenSymbol}
-          </td>
+          <td className="loan-table-small__table-cell"><strong>{repaymentString}</strong> {row.principalTokenSymbol}</td>
+          {
+            sellLoanAvailable &&
+            <td className="loan-table-small__table-cell">
+              <button disabled className="loan-table-small__btn loan-table-small__btn_disabled">Sell Loan</button>
+            </td>
+          }
         </tr>
       );
     });
@@ -83,19 +84,25 @@ function LoanTableSmall(props) {
         </div>
         <table className="loan-table-small__table">
           <thead>
-          <tr>
-            <th className="loan-table-small__table-header" title={props.dateColumnHeader}>Date</th>
-            <th className="loan-table-small__table-header" title="Loan amount">Amount</th>
-            {
-              props.repayAvailable &&
-              <th className="loan-table-small__table-header" title="Loan amount">
-                Repay
-              </th>
-            }
-            <th className="loan-table-small__table-header" title="Interest rate per loan term">Interest</th>
-            <th className="loan-table-small__table-header" title="Loan term">Term</th>
-            <th className="loan-table-small__table-header" title="Total Repayment">Total Repayment</th>
-          </tr>
+            <tr>
+              <th className="loan-table-small__table-header" title={props.dateColumnHeader}>Date</th>
+              <th className="loan-table-small__table-header" title="Loan amount">Amount</th>
+              {
+                props.repayAvailable &&
+                <th className="loan-table-small__table-header" title="Repay">
+                  Repay
+                </th>
+              }
+              <th className="loan-table-small__table-header" title="Interest rate per loan term">Interest</th>
+              <th className="loan-table-small__table-header" title="Loan term">Term</th>
+              <th className="loan-table-small__table-header" title="Total Repayment">Total Repayment</th>
+              {
+                props.sellLoanAvailable &&
+                <th className="loan-table-small__table-header" title="Sell Loan">
+                  Sell Loan
+                </th>
+              }
+            </tr>
           </thead>
           <tbody className="loan-table-small__table-body scrollable-table__table-body scrollable">
           {renderRows(props)}
