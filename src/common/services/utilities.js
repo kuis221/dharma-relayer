@@ -3,7 +3,7 @@ import { LOANSCAN_URL } from '../../common/api/config'
 import BigNumber from 'bignumber.js';
 
 export const calculateRepaymentAmount = (amount, interestRate, numberOfPayments) => 
-  calculateTotalPaymentAmount(amount, interestRate) / numberOfPayments;
+  calculateTotalPaymentAmount(amount, interestRate).div(new BigNumber(numberOfPayments));
 
 export const calculateTotalPaymentAmount = (amount, interestRate) => new BigNumber(amount).times(new BigNumber(interestRate).add(1));
 
@@ -25,10 +25,6 @@ export const convertToRelayerAmortizationFrequency = (dharmaAmortizationUnits) =
   }
   console.error(`Relayer units corresponding to ${dharmaAmortizationUnits} weren't found`);
   return null;
-};
-
-export const isFloat = (n) => {
-  return Number(n) === n && n % 1 !== 0;
 };
 
 export const formatLoanscanLink = (issuanceHash) => `${LOANSCAN_URL}/${issuanceHash}`;
