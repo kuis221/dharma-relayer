@@ -207,7 +207,7 @@ async function createCollateralizedSimpleInterestLoan(debtOrderInfo) {
     collateralTokenSymbol: debtOrderInfo.collateralTokenSymbol,
     collateralAmount: collateralAmount,
     gracePeriodInDays: new BigNumber(0),
-    interestRate: new BigNumber(debtOrderInfo.interestRate),
+    interestRate: new BigNumber(debtOrderInfo.interestRate).div(100),
     amortizationUnit: debtOrderInfo.amortizationUnit,
     termLength: new BigNumber(debtOrderInfo.termLength),
     debtor: getDefaultAccount(),
