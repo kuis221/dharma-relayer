@@ -10,16 +10,20 @@ import ShareLoanModal from "./ShareLoanModal"
 import { convertToRelayer } from "../../utils/relayer-adapter";
 import { DEFAULT_LOAN_REQUEST, termValues, DAYS, PERIODS } from "./constants";
 
-const floatOnly = (value) => {
+let floatOnly = (value, size) => {
   if (value === null || value === '' || value === undefined) {
     return ''
   }
-  let v = value.toString().replace(/[^\d.]/g, '')
-  v = v.slice(0, v.indexOf('.') >= 0 ? v.indexOf('.') + 6 : undefined)
-  return v
+  if (size === undefined) size = 6;
+  let v = value.toString().replace(/[^\d.]/g, '');
+  v = v.slice(0, v.indexOf('.') >= 0 ? v.indexOf('.') + size : undefined);
+  return v;
 };
 
-const required = value => (value ? false : true);
+const floatOnlyPct = (value) => floatOnly(value, 3);
+const floatOnlyNum = (value) => floatOnly(value, 6);
+
+const required = value => (!value);
 
 const initialState = {
   isShareLoanModalOpen: false,
@@ -111,7 +115,7 @@ class PlaceLoanRequest extends Component {
               placeholder="0"
               component="input"
               validate={required}
-              normalize={floatOnly}/>
+              normalize={floatOnlyNum}/>
           </div>
           <div className="loan-request-form__select-wrapper">
             <Field name="currency" className="loan-request-form__select" component="select">
@@ -158,7 +162,7 @@ class PlaceLoanRequest extends Component {
               placeholder="per loan term, %"
               component="input"
               validate={required}
-              format={floatOnly}/>
+              normalize={floatOnlyPct}/>
           </div>
         </div>
 
@@ -179,7 +183,7 @@ class PlaceLoanRequest extends Component {
               className="loan-request-form__input"
               placeholder="0"
               component="input"
-              normalize={floatOnly}/>
+              normalize={floatOnlyNum}/>
           </div>
           <div className="loan-request-form__select-wrapper">
             <Field name="collateralType" className="loan-request-form__select" component="select">

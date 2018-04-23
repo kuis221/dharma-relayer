@@ -40,7 +40,8 @@
     line-height: 1.25;
 }
 
-.issued-table__table-header:nth-child(2), .issued-table__table-cell:nth-child(2){
+.issued-table__table-header:nth-child(2), .issued-table__table-cell:nth-child(2),
+.issued-table__table-header:nth-child(3), .issued-table__table-cell:nth-child(3) {
     white-space: nowrap;
 }
 
