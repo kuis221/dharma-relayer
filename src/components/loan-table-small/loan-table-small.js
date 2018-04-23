@@ -30,7 +30,7 @@ function renderRows({ rows, onRepay, onCancelLoan, repayAvailable, sellLoanAvail
 
       const amount = row.principalAmount;
       const amountString = amount.toFormat(3);
-      const interestRate = row.interestRate.toNumber();
+      const interestRate = row.interestRate.times(100).toFixed(2);
       const totalRepayment = calculateTotalPaymentAmount(amount, row.interestRate);
       const repaymentString = totalRepayment.toFormat(3);
       const rowIsClickable = SHOW_LOANSCAN_LINK && row.issuanceHash;
@@ -40,7 +40,7 @@ function renderRows({ rows, onRepay, onCancelLoan, repayAvailable, sellLoanAvail
         <tr key={i++} className={rowClassName} onClick={() => {rowIsClickable && redirectToLoanscan(row.issuanceHash)}}>
           <td className="loan-table-small__table-cell">{row.date.toLocaleDateString()} <br/> {row.date.toLocaleTimeString()}</td>
           <td className="loan-table-small__table-cell loan-table-small__wide-cell"><strong>{amountString}</strong> {row.principalTokenSymbol} </td>
-          <td className="loan-table-small__table-cell"><strong>{interestRate * 100}</strong> %</td>
+          <td className="loan-table-small__table-cell"><strong>{interestRate}</strong> %</td>
           <td className="loan-table-small__table-cell"><strong>{row.termLength.toNumber()}</strong> {row.amortizationUnit.slice(0,1)}</td>
           <td className="loan-table-small__table-cell loan-table-small__wide-cell"><strong>{repaymentString}</strong> {row.principalTokenSymbol}</td>
           {
