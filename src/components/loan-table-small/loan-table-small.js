@@ -41,7 +41,7 @@ function renderRows({ rows, handleRepay, repayAvailable, sellLoanAvailable }) {
           {
             sellLoanAvailable &&
             <td className="loan-table-small__table-cell loan-table-small__button-cell">
-              <button disabled className="loan-table-small__btn loan-table-small__btn_disabled">Sell</button>
+              <button disabled className="loan-table-small__btn loan-table-small__btn_disabled" title="Coming soon">Sell</button>
             </td>
           }
           {
