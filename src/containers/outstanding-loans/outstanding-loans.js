@@ -8,6 +8,7 @@ import {
   repayLoanFail,
 } from '../../actions';
 import LoanTableSmall from '../../components/loan-table-small/loan-table-small.js';
+import {Modal, ModalBody} from '../../components/modal/modal';
 import RepayLoanModal from './RepayLoanModal'
 import { repayLoan } from "../../common/services/dharmaService";
 import {} from "../../actions/repayLoan";
@@ -111,14 +112,21 @@ class OutstandingLoans extends Component {
             setMyOutstandingLoansOffset(pageSize * pageNum);
             fetchMyOutstandingLoans(pageSize * pageNum, pageSize);
           }}/>
-        <RepayLoanModal
-          loan={this.state.loan}
-          isOpen={this.state.isRepayModalOpened}
-          isLoading={this.props.repayLoanLoading}
-          handleClose={this.handleCloseModal}
-          repayLoanComplete={this.props.repayLoanComplete}
-          onRepay={this.onRepay}
-        />
+        <Modal show={this.state.isRepayModalOpened} size="md" onModalClosed={this.handleCloseModal}>
+          {
+            this.state.loan &&
+            <ModalBody>
+              <RepayLoanModal
+                loan={this.state.loan}
+                isLoading={this.props.repayLoanLoading}
+                handleClose={this.handleCloseModal}
+                repayLoanComplete={this.props.repayLoanComplete}
+                onRepay={this.onRepay}
+              />
+            </ModalBody>
+          }
+        </Modal>
+
       </Fragment>
     );
   }

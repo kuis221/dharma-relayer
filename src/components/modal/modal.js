@@ -22,7 +22,7 @@ export class Modal extends Component{
       (<Provider store={store}>
         <div  className={className} role="document">
           <div className="modal-content">
-            {props.children}
+            {props.show && props.children}
           </div>
         </div>
       </Provider>),
