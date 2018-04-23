@@ -10,7 +10,6 @@ class ConfirmLoanRequest extends Component {
 
     let numberOfPayments = term;
     let interestRateInPercent = new BigNumber(interestRate).div(100);
-    console.log(interestRateInPercent.toFormat(5));
     let repaymentAmount = calculateRepaymentAmount(amount, interestRateInPercent, term);
     let totalPaymentAmount = calculateTotalPaymentAmount(amount, interestRateInPercent);
 
