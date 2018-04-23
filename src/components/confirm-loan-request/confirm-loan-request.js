@@ -29,7 +29,7 @@ class ConfirmLoanRequest extends Component {
             Loan term: <strong>{term}</strong> {amortizationUnit}
           </div>
           <div className="confirm__row">
-            Interest rate: <strong>{interestRate * 100}</strong> %
+            Interest rate: <strong>{interestRate}</strong> %
           </div>
           {
             collateralAmount && (

@@ -38,7 +38,7 @@ function renderRows(rows, fundFunction) {
             <strong>{termLength}</strong> {row.dharmaDebtOrder.amortizationUnit}
           </td>
           <td className="loan-table__table-cell loan-table__primary-cell text-right"><strong>{repaymentString}</strong> {row.dharmaDebtOrder.principalTokenSymbol}</td>
-          <td className="loan-table__table-cell loan-table__primary-cell text-right"><strong>{interestRate * 100}</strong> %</td>
+          <td className="loan-table__table-cell loan-table__primary-cell text-right"><strong>{interestRate}</strong> %</td>
           {renderCollateral(row.dharmaDebtOrder)}
           <td className="loan-table__table-cell loan-table__small-cell">{paymentPeriodFrequency}</td>
           <td className="loan-table__table-cell loan-table__small-cell">

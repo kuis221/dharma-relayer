@@ -19,8 +19,6 @@ const floatOnly = (value) => {
   return v
 };
 
-const percentNormalize = value => floatOnly(value) / 100;
-const percentFormat = value => value * 100;
 const required = value => (value ? false : true);
 
 const initialState = {
@@ -160,8 +158,7 @@ class PlaceLoanRequest extends Component {
               placeholder="per loan term, %"
               component="input"
               validate={required}
-              format={percentFormat}
-              normalize={percentNormalize}/>
+              format={floatOnly}/>
           </div>
         </div>
 

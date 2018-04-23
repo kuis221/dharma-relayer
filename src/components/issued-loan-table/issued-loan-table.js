@@ -20,7 +20,7 @@ function renderRows(rows) {
             <tr key={i++} className={rowClassName} onClick={() => {rowIsClickable && redirectToLoanscan(row.issuanceHash)}}>
                 <td className="issued-table__table-cell">{row.date}</td>
                 <td className="issued-table__table-cell"><strong>{amountString}</strong> {row.token} </td>
-                <td className="issued-table__table-cell"><strong>{row.interest * 100}</strong> %</td>
+                <td className="issued-table__table-cell"><strong>{row.interest}</strong> %</td>
                 <td className="issued-table__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit.slice(0,1)}</td>
             </tr>
         );
