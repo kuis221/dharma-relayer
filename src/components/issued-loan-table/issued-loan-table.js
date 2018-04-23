@@ -13,7 +13,7 @@ function renderRows(rows) {
 
     return rows.map(row => {
         const amountString = row.amount.toFormat(3);
-        const interestRate = row.interest.times(100).toFixed(2);
+        const interestRate = row.interest.toFixed(2);
         const rowIsClickable = SHOW_LOANSCAN_LINK && row.issuanceHash;
         const rowClassName = rowIsClickable ? "issued-table__clickable-row" : "";
 

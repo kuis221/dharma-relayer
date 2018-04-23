@@ -9,9 +9,8 @@ class ConfirmLoanRequest extends Component {
     let { amount, currency, term, interestRate, amortizationFrequency, amortizationUnit, collateralAmount, collateralType } = values;
 
     let numberOfPayments = term;
-    let interestRateInPercent = new BigNumber(interestRate).div(100);
-    let repaymentAmount = calculateRepaymentAmount(amount, interestRateInPercent, term);
-    let totalPaymentAmount = calculateTotalPaymentAmount(amount, interestRateInPercent);
+    let repaymentAmount = calculateRepaymentAmount(amount, interestRate, term);
+    let totalPaymentAmount = calculateTotalPaymentAmount(amount, interestRate);
 
     return (
       <div>
