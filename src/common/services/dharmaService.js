@@ -169,6 +169,11 @@ export async function getRemainingRepaymentValue(debtOrder) {
   return res;
 }
 
+export async function cancelDebtOrder(issuanceHash){
+  //todo: implement
+  return;
+}
+
 async function createSimpleInterestLoan(debtOrderInfo) {
   const tokenRegistry = await dharma.contracts.loadTokenRegistry();
   const principalToken = await tokenRegistry.getTokenAddressBySymbol.callAsync(debtOrderInfo.principalTokenSymbol);
@@ -245,3 +250,4 @@ const defaultDebtOrderParams = {
     "v": 0
   },
 }
+
