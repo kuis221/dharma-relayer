@@ -8,6 +8,7 @@ import { SUPPORTED_TOKENS } from '../../common/api/config.js';
 import PlaceLoanModal from "./PlaceLoanModal"
 import ShareLoanModal from "./ShareLoanModal"
 import { convertToRelayer } from "../../utils/relayer-adapter";
+import {convertPlexOrder} from '../../common/services/dharmaService';
 import { DEFAULT_LOAN_REQUEST, termValues, DAYS, PERIODS } from "./constants";
 
 let floatOnly = (value, size) => {
@@ -25,6 +26,13 @@ const floatOnlyNum = (value) => floatOnly(value, 6);
 
 const required = value => (!value);
 
+
+const getAmortizationPeriodByFrequency = amortizationFrequency =>
+  PERIODS.find(period => period.value === amortizationFrequency);
+
+const getAmortizationPeriodByUnit = amortizationUnit =>
+  PERIODS.find(period => period.dharmaUnit === amortizationUnit)
+
 const initialState = {
   isShareLoanModalOpen: false,
   relayer: null,
@@ -41,15 +49,12 @@ class PlaceLoanRequest extends Component {
 
   state = initialState
 
-  getAmortizationPeriod = amortizationFrequency =>
-    PERIODS.find(period => period.value === amortizationFrequency)
-
   placeLoanRequestClick = (values) => {
-    const amortizationPeriod = this.getAmortizationPeriod(values.amortizationFrequency)
+    const amortizationPeriod = getAmortizationPeriodByFrequency(values.amortizationFrequency)
     this.props.showLoanConfirmation({
       ...values,
       amortizationFrequency: values.amortizationFrequency || termValues[values.term].amortizationFrequencies[0],
-      amortizationUnit: amortizationPeriod && amortizationPeriod.dharmaUnit,
+      amortizationUnit: amortizationPeriod && amortizationPeriod.dharmaUnit
     });
   }
 
@@ -72,20 +77,30 @@ class PlaceLoanRequest extends Component {
   handleSignedLoanRequest = () =>
     this.openShareModal()
 
-  submitShareLoan = (e) => {
-    e.preventDefault()
-    const { requestJson } = e.target.elements
-    try {
-      if (requestJson) {
-        const relayer = convertToRelayer(JSON.parse(requestJson.value))
-        this.closeShareModal()
-        this.setState({ relayer, isShareLoanRequest: true })
-        this.placeLoanRequestClick(DEFAULT_LOAN_REQUEST)
-      }
-    } catch (err) {
-      alert(err)
+  submitShareLoan = (json) => {
+    if (json) {
+      convertPlexOrder(JSON.parse(json)).then(
+        relayerOrder => {
+          this.closeShareModal();
+          this.setState({ relayer: relayerOrder, isShareLoanRequest: true });
+
+          let relayerOrderInfo = {
+            amount: relayerOrder.principalAmount.toNumber(),
+            currency: relayerOrder.principalTokenSymbol,
+            amortizationUnit: relayerOrder.amortizationUnit,
+            amortizationFrequency: getAmortizationPeriodByUnit(relayerOrder.amortizationUnit).value,
+            interestRate: relayerOrder.interestRate.toNumber(),
+            term: relayerOrder.termLength.toNumber()
+          };
+          if(relayerOrder.collateralAmount){
+            relayerOrderInfo.collateralAmount = relayerOrder.collateralAmount.toNumber();
+            relayerOrderInfo.collateralType = relayerOrder.collateralTokenSymbol;
+          }
+          this.placeLoanRequestClick(relayerOrderInfo);
+        }
+      ).catch(err => alert(err));
     }
-  }
+  };
 
   clearState = () => this.setState(initialState)
 
@@ -225,8 +240,10 @@ const mapDispatchToProps = (dispatch) => ({
   },
   showLoanConfirmation(debtOrder) {
     dispatch(showLoanConfirmation(debtOrder));
-    dispatch(getCollateralTokenLock(debtOrder.collateralType));
-  },
+    if(debtOrder.collateralAmount){
+      dispatch(getCollateralTokenLock(debtOrder.collateralType));
+    }
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
