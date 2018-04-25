@@ -1,6 +1,6 @@
 import debtsApi from '../common/api/debts';
 import * as loanStatuses from '../common/loanStatuses';
-import {fromDebtOrder} from '../common/services/dharmaService';
+import {convertFromRelayerFormat} from '../common/services/dharmaService';
 
 export const GET_LOAN_REQUESTS = 'GET_LOAN_REQUESTS';
 export const GET_LOAN_REQUESTS_SUCCESS = 'GET_LOAN_REQUESTS_SUCCESS';
@@ -31,7 +31,7 @@ export function getLoanRequests(offset, limit){
                 let {items:debts, totalItemsCount} = resp;
 
                 let promises = debts.map(debt => {
-                    return fromDebtOrder(debt).then(debtOrder => {
+                    return convertFromRelayerFormat(debt).then(debtOrder => {
                         if(debtOrder){
                             return {...debt, dharmaDebtOrder:debtOrder};
                         }

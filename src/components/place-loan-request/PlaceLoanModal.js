@@ -18,11 +18,22 @@ import {
   PLACE_LOAN_FAIL
 } from "../../actions";
 import debtsApi from "../../common/api/debts";
+import {convertToRelayerFormat} from '../../common/services/dharmaService';
 
 class PlaceLoanModal extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      isShareLoanRequest: props.isShareLoanRequest
+    }
+  }
+
   cancelLoanRequest = () => {
     this.props.resetLoanForm();
-    this.props.hideLoanConfirmation()
+    this.props.hideLoanConfirmation();
+    this.setState({
+      isShareLoanRequest: false
+    });
   }
 
   renderWizardWithUnlockStep = (currentStepNumber) => (
@@ -48,16 +59,32 @@ class PlaceLoanModal extends React.Component {
   )
 
   shareLoanRequestHandler = () => {
-    debtsApi.post(this.props.relayer)
-      .then(resp => {
-        this.props.placeLoanRequestSuccess(resp)
-        this.props.onRelayerSubmit()
-        this.props.changeStep(2);
-      })
-      .catch(err => {
-        console.error(err)
-        this.props.placeLoanRequestFail(err)
+    convertToRelayerFormat(this.props.debtOrder).then(
+      debtOrder => debtsApi.post(debtOrder)
+    ).then(resp => {
+      this.props.placeLoanRequestSuccess(resp);
+      this.props.onRelayerSubmit();
+      this.props.changeStep(2);
+    })
+    .catch(err => {
+      console.error(err)
+      this.props.placeLoanRequestFail(err)
+    });
+  }
+
+  componentWillReceiveProps(newProps){
+    if(newProps.isShareLoanRequest){
+      this.setState({
+        isShareLoanRequest: true
       });
+    }
+  }
+
+  modalClosed(){
+    this.setState({
+      isShareLoanRequest: false
+    });
+    this.props.hideLoanConfirmation();
   }
 
   render() {
@@ -66,8 +93,7 @@ class PlaceLoanModal extends React.Component {
       placeLoan,
       changeStep,
       unlockCollateralToken,
-      hideLoanConfirmation,
-      isShareLoanRequest,
+      hideLoanConfirmation
     } = this.props
     const collateralExists = debtOrderConfirmation.collateralAmount > 0;
 
@@ -75,15 +101,15 @@ class PlaceLoanModal extends React.Component {
     let renderReviewStep = false;
     let renderFinalStep = false;
     if (debtOrderConfirmation.modalVisible) {
-      renderUnlockStep = collateralExists && (debtOrderConfirmation.stepNumber === 1);
-      renderReviewStep = !isShareLoanRequest && ((collateralExists && debtOrderConfirmation.stepNumber === 2) || (!collateralExists && debtOrderConfirmation.stepNumber === 1));
-      renderFinalStep = (collateralExists && debtOrderConfirmation.stepNumber === 3) || (!collateralExists && debtOrderConfirmation.stepNumber === 2);
+      renderUnlockStep = !this.state.isShareLoanRequest && collateralExists && (debtOrderConfirmation.stepNumber === 1);
+      renderReviewStep = !this.state.isShareLoanRequest && ((collateralExists && debtOrderConfirmation.stepNumber === 2) || (!collateralExists && debtOrderConfirmation.stepNumber === 1));
+      renderFinalStep = (this.state.isShareLoanRequest && debtOrderConfirmation.stepNumber === 2) || (collateralExists && debtOrderConfirmation.stepNumber === 3) || (!collateralExists && debtOrderConfirmation.stepNumber === 2);
     }
 
     return (
-      <Modal show={debtOrderConfirmation.modalVisible} size="md" onModalClosed={hideLoanConfirmation}>
+      <Modal show={debtOrderConfirmation.modalVisible} size="md" onModalClosed={this.modalClosed.bind(this)}>
         <div className="loan-request-form__wizard-wrapper">
-          {collateralExists ? this.renderWizardWithUnlockStep(debtOrderConfirmation.stepNumber) : this.renderWizardNoUnockStep(debtOrderConfirmation.stepNumber)}
+          {(collateralExists && !this.state.isShareLoanRequest) ? this.renderWizardWithUnlockStep(debtOrderConfirmation.stepNumber) : this.renderWizardNoUnockStep(debtOrderConfirmation.stepNumber)}
         </div>
 
         <ModalBody>
@@ -109,15 +135,15 @@ class PlaceLoanModal extends React.Component {
               isLoading={placeLoan.isLoading}/>
           }
           {
-            isShareLoanRequest &&
+            this.state.isShareLoanRequest && !renderFinalStep &&
             <ConfirmLoanRequest
               title="You are about to post a loan request with the following terms:"
               confirmText="POST LOAN REQUEST"
               {...debtOrderConfirmation}
               onCancel={() => {
-                collateralExists ? changeStep(1) : this.cancelLoanRequest()
+                this.cancelLoanRequest()
               } }
-              onConfirm={this.shareLoanRequestHandler}
+              onConfirm={this.shareLoanRequestHandler.bind(this)}
               isLoading={placeLoan.isLoading}
             />
           }

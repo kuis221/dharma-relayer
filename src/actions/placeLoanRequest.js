@@ -1,4 +1,4 @@
-import {createDebtOrder} from '../common/services/dharmaService';
+import {signDebtOrder} from '../common/services/dharmaService';
 import debtsApi from '../common/api/debts';
 
 export const PLACE_LOAN = 'PLACE_LOAN';
@@ -29,7 +29,7 @@ export function placeLoanRequest(
       collateralTokenSymbol: collateralType,
       collateralAmount: collateralAmount
     };
-    return createDebtOrder(debtOrderInfo)
+    return signDebtOrder(debtOrderInfo)
       .then(debtOrder => {
         console.log("debtOrder")
         console.log(debtOrder)

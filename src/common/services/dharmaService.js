@@ -11,7 +11,7 @@ export async function getKernelVersion() {
   return kernel.address;
 }
 
-export async function createDebtOrder(debtOrderInfo) {
+export async function signDebtOrder(debtOrderInfo) {
   let dharmaDebtOrder;
   const collateral = debtOrderInfo.collateralAmount;
   if (collateral && new BigNumber(collateral).greaterThan(0)) {
@@ -23,84 +23,7 @@ export async function createDebtOrder(debtOrderInfo) {
   dharmaDebtOrder.debtorSignature = await dharma.sign.asDebtor(dharmaDebtOrder, true);
 
   console.log(`Dharma debt order: ${JSON.stringify(dharmaDebtOrder)}`);
-  const result = {
-    kernelAddress: (await dharma.contracts.loadDebtKernelAsync()).address,
-    repaymentRouterAddress: (await dharma.contracts.loadRepaymentRouterAsync()).address,
-    creditorFee: dharmaDebtOrder.creditorFee.toString(),
-    debtorFee: dharmaDebtOrder.debtorFee.toString(),
-    principalAmount: dharmaDebtOrder.principalAmount.toString(),
-    principalTokenAddress: dharmaDebtOrder.principalToken,
-    debtorAddress: dharmaDebtOrder.debtor,
-    creditorAddress: dharmaDebtOrder.creditor,
-    termsContractAddress: dharmaDebtOrder.termsContract,
-    termsContractParameters: dharmaDebtOrder.termsContractParameters,
-    expirationTime: new Date(dharmaDebtOrder.expirationTimestampInSec.toNumber() * 1000).toISOString(),
-    salt: dharmaDebtOrder.salt.toString(),
-    debtorSignature: JSON.stringify(dharmaDebtOrder.debtorSignature),
-    underwriterAddress: dharmaDebtOrder.underwriter,
-    underwriterRiskRating: dharmaDebtOrder.underwriterRiskRating,
-    underwriterFee: dharmaDebtOrder.underwriterFee,
-    underwriterSignature: JSON.stringify(dharmaDebtOrder.underwriterSignature),
-    relayerAddress: dharmaDebtOrder.relayer,
-    relayerFee: dharmaDebtOrder.relayerFee
-  };
-
-  return result;
-}
-
-const debtOrdersCache = {};
-
-export async function fromDebtOrder(debtOrder) {
-  if (debtOrder.id in debtOrdersCache) {
-    return debtOrdersCache[debtOrder.id];
-  }
-
-  try {
-    var t0 = performance.now();
-    const dharmaDebtOrder = {
-      kernelVersion: debtOrder.kernelAddress,
-      issuanceVersion: debtOrder.repaymentRouterAddress,
-      principalAmount: new BigNumber(debtOrder.principalAmount || 0),
-      principalToken: debtOrder.principalTokenAddress,
-      debtor: debtOrder.debtorAddress,
-      debtorFee: debtOrder.debtorFee && new BigNumber(debtOrder.debtorFee || 0),
-      termsContract: debtOrder.termsContractAddress,
-      termsContractParameters: debtOrder.termsContractParameters,
-      expirationTimestampInSec: new BigNumber(new Date(debtOrder.expirationTime).getTime() / 1000),
-      salt: new BigNumber(debtOrder.salt || 0),
-      debtorSignature: debtOrder.debtorSignature ? JSON.parse(debtOrder.debtorSignature) : null,
-      relayer: debtOrder.relayerAddress,
-      relayerFee: new BigNumber(debtOrder.relayerFee || 0),
-      underwriter: debtOrder.underwriterAddress || defaultDebtOrderParams.underwriter,
-      underwriterRiskRating: new BigNumber(debtOrder.underwriterRiskRating || defaultDebtOrderParams.underwriterRiskRating),
-      underwriterFee: new BigNumber(debtOrder.underwriterFee || defaultDebtOrderParams.underwriterFee),
-      underwriterSignature: debtOrder.underwriterSignature ? JSON.parse(debtOrder.underwriterSignature) : defaultDebtOrderParams.underwriterSignature,
-      creditorFee: new BigNumber(debtOrder.creditorFee || 0),
-    };
-
-    dharmaDebtOrder.originalDebtOrder = Object.assign({}, dharmaDebtOrder)
-    var t1 = performance.now();
-    const adapter = await getAdapterByTermsContractAddress(dharmaDebtOrder.termsContract);
-    var t2 = performance.now();
-    const convertedDebtOrder = await adapter.fromDebtOrder(dharmaDebtOrder);
-    var t3 = performance.now();
-    convertedDebtOrder.principalAmount = await tokenService.convertToHumanReadable(convertedDebtOrder.principalAmount, convertedDebtOrder.principalTokenSymbol);
-    var t4 = performance.now();
-    if (false && process.env.NODE_ENV !== "production") {
-      console.log(`fromDebtOrder timing: ${Math.ceil(t1 - t0)} ${Math.ceil(t2 - t1)} ${Math.ceil(t3 - t2)} ${Math.ceil(t4 - t3)}`)
-    }
-
-    if (convertedDebtOrder.collateralAmount) {
-      convertedDebtOrder.collateralAmount = await tokenService.convertToHumanReadable(convertedDebtOrder.collateralAmount, convertedDebtOrder.collateralTokenSymbol);
-    }
-
-    debtOrdersCache[debtOrder.id] = convertedDebtOrder;
-
-    return convertedDebtOrder;
-  } catch (e) {
-    console.error(e)
-    return null;
-  }
+  return await convertToRelayerFormat(dharmaDebtOrder);
 }
 
 export async function fillDebtOrder(debtOrder) {
@@ -167,6 +90,106 @@ export async function getRemainingRepaymentValue(debtOrder) {
   const res = await tokenService.convertToHumanReadable(totalRepayments.sub(repaid), debtOrder.principalTokenSymbol);
 
   return res;
+}
+
+export async function convertToRelayerFormat(dharmaDebtOrder){
+  const result = {
+    kernelAddress: (await dharma.contracts.loadDebtKernelAsync()).address,
+    repaymentRouterAddress: (await dharma.contracts.loadRepaymentRouterAsync()).address,
+    creditorFee: dharmaDebtOrder.creditorFee.toString(),
+    debtorFee: dharmaDebtOrder.debtorFee.toString(),
+    principalAmount: dharmaDebtOrder.principalAmount.toString(),
+    principalTokenAddress: dharmaDebtOrder.principalToken,
+    debtorAddress: dharmaDebtOrder.debtor,
+    creditorAddress: dharmaDebtOrder.creditor,
+    termsContractAddress: dharmaDebtOrder.termsContract,
+    termsContractParameters: dharmaDebtOrder.termsContractParameters,
+    expirationTime: new Date(dharmaDebtOrder.expirationTimestampInSec.toNumber() * 1000).toISOString(),
+    salt: dharmaDebtOrder.salt.toString(),
+    debtorSignature: JSON.stringify(dharmaDebtOrder.debtorSignature),
+    underwriterAddress: dharmaDebtOrder.underwriter,
+    underwriterRiskRating: dharmaDebtOrder.underwriterRiskRating,
+    underwriterFee: dharmaDebtOrder.underwriterFee,
+    underwriterSignature: JSON.stringify(dharmaDebtOrder.underwriterSignature),
+    relayerAddress: dharmaDebtOrder.relayer,
+    relayerFee: dharmaDebtOrder.relayerFee
+  };
+
+  return result;
+}
+
+const debtOrdersCache = {};
+
+export async function convertFromRelayerFormat(debtOrder) {
+  if (debtOrder.id in debtOrdersCache) {
+    return debtOrdersCache[debtOrder.id];
+  }
+
+  try {
+    const dharmaDebtOrder = {
+      kernelVersion: debtOrder.kernelAddress,
+      issuanceVersion: debtOrder.repaymentRouterAddress,
+      principalAmount: new BigNumber(debtOrder.principalAmount || 0),
+      principalToken: debtOrder.principalTokenAddress,
+      debtor: debtOrder.debtorAddress,
+      debtorFee: debtOrder.debtorFee && new BigNumber(debtOrder.debtorFee || 0),
+      termsContract: debtOrder.termsContractAddress,
+      termsContractParameters: debtOrder.termsContractParameters,
+      expirationTimestampInSec: new BigNumber(new Date(debtOrder.expirationTime).getTime() / 1000),
+      salt: new BigNumber(debtOrder.salt || 0),
+      debtorSignature: debtOrder.debtorSignature ? JSON.parse(debtOrder.debtorSignature) : null,
+      relayer: debtOrder.relayerAddress,
+      relayerFee: new BigNumber(debtOrder.relayerFee || 0),
+      underwriter: debtOrder.underwriterAddress || defaultDebtOrderParams.underwriter,
+      underwriterRiskRating: new BigNumber(debtOrder.underwriterRiskRating || defaultDebtOrderParams.underwriterRiskRating),
+      underwriterFee: new BigNumber(debtOrder.underwriterFee || defaultDebtOrderParams.underwriterFee),
+      underwriterSignature: debtOrder.underwriterSignature ? JSON.parse(debtOrder.underwriterSignature) : defaultDebtOrderParams.underwriterSignature,
+      creditorFee: new BigNumber(debtOrder.creditorFee || 0),
+    };
+
+    dharmaDebtOrder.originalDebtOrder = Object.assign({}, dharmaDebtOrder)
+    let convertedDebtOrder = await convertToDisplayFormat(dharmaDebtOrder);
+
+
+    debtOrdersCache[debtOrder.id] = convertedDebtOrder;
+
+    return convertedDebtOrder;
+  } catch (e) {
+    console.error(e)
+    return null;
+  }
+}
+
+export async function convertToDisplayFormat(dharmaDebtOrder){
+  const adapter = await getAdapterByTermsContractAddress(dharmaDebtOrder.termsContract);
+  const convertedDebtOrder = await adapter.fromDebtOrder(dharmaDebtOrder);
+  convertedDebtOrder.principalAmount = await tokenService.convertToHumanReadable(convertedDebtOrder.principalAmount, convertedDebtOrder.principalTokenSymbol);
+
+  if (convertedDebtOrder.collateralAmount) {
+    convertedDebtOrder.collateralAmount = await tokenService.convertToHumanReadable(convertedDebtOrder.collateralAmount, convertedDebtOrder.collateralTokenSymbol);
+  }
+
+  return convertedDebtOrder;
+}
+
+export function parsePlexOrder(json){
+  const plexOrder = JSON.parse(json)
+  const dharmaDebtOrder = {
+    ...plexOrder,
+    principalAmount: new BigNumber(plexOrder.principalAmount || 0),
+    debtorFee:new BigNumber(plexOrder.debtorFee || 0),
+    creditorFee: new BigNumber(plexOrder.creditorFee || 0),
+    relayerFee: new BigNumber(plexOrder.relayerFee || 0),
+    underwriterFee: new BigNumber(plexOrder.underwriterFee || 0),
+    underwriterRiskRating: new BigNumber(plexOrder.underwriterRiskRating || 0),
+    salt: new BigNumber(plexOrder.salt || 0),
+    debtorSignature: JSON.parse(plexOrder.debtorSignature),
+    creditorSignature: JSON.parse(plexOrder.creditorSignature),
+    underwriterSignature: JSON.parse(plexOrder.underwriterSignature),
+    expirationTimestampInSec: new BigNumber(plexOrder.expirationTimestampInSec)
+  };
+
+  return dharmaDebtOrder;
 }
 
 async function createSimpleInterestLoan(debtOrderInfo) {
