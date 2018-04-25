@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dharmaprotocol/dharma.js": "0.0.45",
+    "@dharmaprotocol/dharma.js": "0.0.48",
     "autoprefixer": "7.1.6",
     "axios": "^0.18.0",
     "babel-core": "6.26.0",
@@ -53,9 +53,6 @@
     "webpack-dev-server": "2.9.4",
     "webpack-manifest-plugin": "1.3.2",
     "whatwg-fetch": "2.0.3"
-  },
-  "resolutions": {
-    "@dharmaprotocol/dharma.js/web3": "git+https://github.com/confirmationlabs/web3.js.git"
   },
   "scripts": {
     "start": "node scripts/start.js",
