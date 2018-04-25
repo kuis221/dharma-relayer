@@ -3,10 +3,10 @@ import './wallet-info.css';
 import Spinner from '../spinner/spinner';
 import { SUPPORTED_TOKENS } from '../../common/api/config';
 
-let destroyTimer = null;
+let timer = null;
 
 let startTimer = (func) => {
-  destroyTimer = setTimeout(() => {
+  timer = setTimeout(() => {
     func();
     startTimer(func);
   }, 5000)
@@ -26,7 +26,7 @@ class WalletInfo extends Component{
   }
 
   componentWillUnmount(){
-    destroyTimer && destroyTimer();
+    timer && clearTimeout(timer);
   }
 
   renderCurrencyItems(selectedCurrency){
@@ -62,9 +62,9 @@ class WalletInfo extends Component{
           <p>Balance</p>
           <div>
             {isProcessing ? <Spinner></Spinner> :
-              <b className="wallet-info__balance" title={`${amountString} ${selectedCurrency}`}>
-                {amountString} {selectedCurrency}
-              </b>
+              <span className="wallet-info__balance" title={`${amountString} ${selectedCurrency}`}>
+                <strong>{amountString}</strong> {selectedCurrency}
+              </span>
             }
             <div className="wallet-info__currency-container">
               {this.renderCurrencyItems(selectedCurrency)}

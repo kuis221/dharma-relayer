@@ -5,9 +5,9 @@ import LoanTableSmall from '../../components/loan-table-small/loan-table-small.j
 
 const pageSize = 5;
 
-let destroyTimer = null;
+let timer = null;
 let startTimer = (func) => {
-  destroyTimer = setTimeout(() => {
+  timer = setTimeout(() => {
     func();
     startTimer(func);
   }, 10000)
@@ -27,7 +27,7 @@ class OpenLoanRequests extends Component {
   }
 
   componentWillUnmount() {
-    destroyTimer && destroyTimer();
+    timer && clearTimeout(timer);
   }
 
   getOpenLoansForCurrentPage() {
@@ -42,9 +42,9 @@ class OpenLoanRequests extends Component {
 
     let rows = myOpenLoanRequests.map(loan => ({
       date: new Date(loan.creationTime),
-      principalAmount: loan.principalAmount.toNumber(),
+      principalAmount: loan.principalAmount,
       principalTokenSymbol: loan.principalTokenSymbol,
-      termLength: loan.termLength.toNumber(),
+      termLength: loan.termLength,
       amortizationUnit: loan.amortizationUnit,
       interestRate: loan.interestRate
     }));

@@ -1,7 +1,7 @@
 import debtsApi from '../common/api/debts';
 import * as loanStatuses from '../common/loanStatuses';
 import { getDefaultAccount } from '../common/services/web3Service';
-import { fromDebtOrder } from '../common/services/dharmaService';
+import { convertFromRelayerFormat } from '../common/services/dharmaService';
 
 export const FETCH_MY_OPEN_LOAN_REQUESTS = 'FETCH_MY_OPEN_LOAN_REQUESTS';
 export const FETCH_MY_OPEN_LOAN_REQUESTS_SUCCESS = 'FETCH_MY_OPEN_LOAN_REQUESTS_SUCCESS';
@@ -26,7 +26,7 @@ export function fetchMyOpenedLoanRequests(offset, limit) {
       .then((response) => {
         let {items:debts, totalItemsCount} = response;
         let promises = debts.map(debt => {
-          return fromDebtOrder(debt).then(dharmaDebt => {
+          return convertFromRelayerFormat(debt).then(dharmaDebt => {
             if(dharmaDebt){
               return {
                 ...dharmaDebt,

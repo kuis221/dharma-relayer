@@ -18,12 +18,12 @@ export default function (state = {
           .map(loan => ({...loan, issuanceBlockTimeParsed: new Date(loan.issuanceBlockTime)}))
           .sort((a, b) => a.issuanceBlockTimeParsed < b.issuanceBlockTimeParsed ? 1 : (-1))
           .map(loan => ({
-            amount: loan.dharmaDebtOrder.principalAmount.toNumber(),
+            amount: loan.dharmaDebtOrder.principalAmount,
             token: loan.dharmaDebtOrder.principalTokenSymbol,
-            date: loan.issuanceBlockTimeParsed.toLocaleDateString() + " " + loan.issuanceBlockTimeParsed.toLocaleTimeString(),
+            date: loan.issuanceBlockTimeParsed,
             termLength: loan.dharmaDebtOrder.termLength.toNumber(),
             amortizationUnit: loan.dharmaDebtOrder.amortizationUnit,
-            interest: loan.dharmaDebtOrder.interestRate.toNumber(),
+            interest: loan.dharmaDebtOrder.interestRate,
             issuanceHash: loan.issuanceHash
           }))
       };

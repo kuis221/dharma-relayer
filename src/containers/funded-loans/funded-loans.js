@@ -5,9 +5,9 @@ import LoanTableSmall from '../../components/loan-table-small/loan-table-small.j
 
 const pageSize = 5;
 
-let destroyTimer = null;
+let timer = null;
 let startTimer = (func) => {
-  destroyTimer = setTimeout(() => {
+  timer = setTimeout(() => {
     func();
     startTimer(func);
   }, 10000)
@@ -34,7 +34,7 @@ class FundedLoans extends Component {
   }
 
   componentWillUnmount() {
-    destroyTimer && destroyTimer();
+    timer && clearTimeout(timer);
   }
 
   render() {
@@ -42,9 +42,9 @@ class FundedLoans extends Component {
 
     let rows = myFundedLoans.map(loan => ({
       date: new Date(loan.issuanceBlockTime),
-      principalAmount: loan.principalAmount.toNumber(),
+      principalAmount: loan.principalAmount,
       principalTokenSymbol: loan.principalTokenSymbol,
-      termLength: loan.termLength.toNumber(),
+      termLength: loan.termLength,
       amortizationUnit: loan.amortizationUnit,
       interestRate: loan.interestRate,
       issuanceHash: loan.issuanceHash
@@ -52,8 +52,9 @@ class FundedLoans extends Component {
 
     return (
       <LoanTableSmall
-        header="My funded loans"
+        header="My investments in loans"
         dateColumnHeader="Date loan issued"
+        sellLoanAvailable={true}
         rows={rows}
         isLoading={isLoading}
         showPaging={showPaging}

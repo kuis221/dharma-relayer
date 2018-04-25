@@ -1,33 +1,28 @@
 import React from 'react';
 import './issued-loan-table.css';
-import { isFloat, formatLoanscanLink } from '../../common/services/utilities';
+import { formatLoanscanLink } from '../../common/services/utilities';
+import BigNumber from 'bignumber.js';
 import { SHOW_LOANSCAN_LINK } from '../../common/api/config';
 
-function renderDate(row) {
-    
-    if (SHOW_LOANSCAN_LINK && row.issuanceHash) {
-        return (
-            <td className="issued-table__table-cell">
-                <a href={formatLoanscanLink(row.issuanceHash)} target="_blank">{row.date}</a>
-            </td>
-        )
-    }
-
-    return (
-        <td className="issued-table__table-cell">{row.date}</td>
-    )
+function redirectToLoanscan(issuanceHash){
+  window.open(formatLoanscanLink(issuanceHash), "_blank");
 }
 
 function renderRows(rows) {
     let i = 0;
+
     return rows.map(row => {
-        let amountString = isFloat(row.amount) ? row.amount.toFixed(2) : row.amount;
+        const amountString = row.amount.toFormat(3);
+        const interestRate = row.interest.toFixed(2);
+        const rowIsClickable = SHOW_LOANSCAN_LINK && row.issuanceHash;
+        const rowClassName = rowIsClickable ? "issued-table__clickable-row" : "";
+
         return (
-            <tr key={i++}>
-                {renderDate(row)}
+            <tr key={i++} className={rowClassName} onClick={() => {rowIsClickable && redirectToLoanscan(row.issuanceHash)}}>
+                <td className="issued-table__table-cell">{row.date.toLocaleDateString()} <br/><span className="text-nowrap">{row.date.toLocaleTimeString()}</span></td>
                 <td className="issued-table__table-cell"><strong>{amountString}</strong> {row.token} </td>
-                <td className="issued-table__table-cell"><strong>{row.interest * 100}</strong> %</td>
-                <td className="issued-table__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit}</td>
+                <td className="issued-table__table-cell"><strong>{interestRate}</strong> %</td>
+                <td className="issued-table__table-cell"><strong>{row.termLength}</strong> {row.amortizationUnit.slice(0,1)}</td>
             </tr>
         );
     });

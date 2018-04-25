@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { calculateRepaymentAmount, calculateTotalPaymentAmount, isFloat } from '../../common/services/utilities';
+import { calculateRepaymentAmount, calculateTotalPaymentAmount } from '../../common/services/utilities';
 import Confirm from '../confirm/confirm';
+import BigNumber from 'bignumber.js';
 
 class ConfirmLoanRequest extends Component {
   render() {
-    let { onConfirm, onCancel, isLoading, ...values } = this.props;
+    let { onConfirm, onCancel, isLoading, title, confirmText, ...values } = this.props;
     let { amount, currency, term, interestRate, amortizationFrequency, amortizationUnit, collateralAmount, collateralType } = values;
 
     let numberOfPayments = term;
@@ -14,31 +15,31 @@ class ConfirmLoanRequest extends Component {
     return (
       <div>
         <Confirm
-          header="You are about to create a loan request with the following terms:"
-          confirmText="PLACE LOAN REQUEST"
+          header={title || "You are about to create a loan request with the following terms:"}
+          confirmText={confirmText || "PLACE LOAN REQUEST"}
           cancelText="BACK"
           onConfirm={() => onConfirm(values)}
           onCancel={onCancel}
           isLoading={isLoading}>
 
           <div className="confirm__row">
-            Loan amount: <strong>{isFloat(amount) ? amount.toFixed(5) : amount}</strong> {currency}
+            Loan amount: <strong>{new BigNumber(amount).toFormat(3)}</strong> {currency}
           </div>
           <div className="confirm__row">
             Loan term: <strong>{term}</strong> {amortizationUnit}
-            </div>
+          </div>
           <div className="confirm__row">
-            Interest rate: <strong>{interestRate * 100}</strong> %
-            </div>
+            Interest rate: <strong>{new BigNumber(interestRate).toFixed(2)}</strong> %
+          </div>
           {
             collateralAmount && (
               <div className="confirm__row">
-                Collateral amount: <strong>{collateralAmount}</strong> {collateralType}
+                Collateral amount: <strong>{new BigNumber(collateralAmount).toFormat(3)}</strong> {collateralType}
               </div>
             )
           }
           <div className="confirm__row">
-            Total loan repayment amount: <strong>{isFloat(totalPaymentAmount) ? totalPaymentAmount.toFixed(5) : totalPaymentAmount}</strong> {currency}
+            Total loan repayment amount: <strong>{totalPaymentAmount.toFormat(5)}</strong> {currency}
           </div>
           <div className="confirm__row">
             Number of payments: <strong>{numberOfPayments}</strong>
@@ -47,11 +48,11 @@ class ConfirmLoanRequest extends Component {
             Payment frequency: <strong>{amortizationFrequency}</strong>
           </div>
           <div className="confirm__row">
-            Payment amount: <strong>{isFloat(repaymentAmount) ? repaymentAmount.toFixed(5) : repaymentAmount}</strong> {currency}
+            Payment amount: <strong>{repaymentAmount.toFormat(5)}</strong> {currency}
           </div>
           <br />
           <div className="confirm__row">
-            Relayer fees: <strong>0.00%</strong>
+            Relayer fees: <strong>0.00</strong> %
           </div>
           <hr />
         </Confirm>

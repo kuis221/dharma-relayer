@@ -1,9 +1,15 @@
 import { RELAYER_AMORTIZATION_FREQUENCIES, DHARMA_AMORTIZATION_UNITS } from '../../common/amortizationFrequencies';
 import { LOANSCAN_URL } from '../../common/api/config'
+import BigNumber from 'bignumber.js';
 
-export const calculateRepaymentAmount = (amount, interestRate, numberOfPayments) => amount * interestRate / numberOfPayments;
+export function calculateRepaymentAmount(amount, interestRate, numberOfPayments){
+  return calculateTotalPaymentAmount(amount, interestRate).div(new BigNumber(numberOfPayments));
+}
+  
 
-export const calculateTotalPaymentAmount = (amount, interestRate) => amount * (1 + interestRate);
+export function calculateTotalPaymentAmount (amount, interestRate) {
+  return new BigNumber(amount).times(new BigNumber(interestRate).div(100).add(1));
+}
 
 export const convertToRelayerAmortizationFrequency = (dharmaAmortizationUnits) => {
   if (dharmaAmortizationUnits === DHARMA_AMORTIZATION_UNITS.DAYS) {
@@ -23,10 +29,6 @@ export const convertToRelayerAmortizationFrequency = (dharmaAmortizationUnits) =
   }
   console.error(`Relayer units corresponding to ${dharmaAmortizationUnits} weren't found`);
   return null;
-};
-
-export const isFloat = (n) => {
-  return Number(n) === n && n % 1 !== 0;
 };
 
 export const formatLoanscanLink = (issuanceHash) => `${LOANSCAN_URL}/${issuanceHash}`;

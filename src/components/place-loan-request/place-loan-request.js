@@ -2,99 +2,60 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector, change as changeForm } from 'redux-form';
 import './place-loan-request.css';
-import {
-  placeLoanRequest,
-  resetLoanForm,
-  hideLoanConfirmation,
-  showLoanConfirmation,
-  runGlobalUpdate,
-  changeDebtOrderConfirmationStep,
-  unlockCollateralToken,
-  lockCollateralToken,
-  getCollateralTokenLock,
-} from '../../actions';
+import { showLoanConfirmation, getCollateralTokenLock } from '../../actions';
 import { RELAYER_AMORTIZATION_FREQUENCIES } from '../../common/amortizationFrequencies';
-import { Modal, ModalBody } from '../modal/modal';
-import ConfirmLoanRequest from '../confirm-loan-request/confirm-loan-request';
-import UnlockCollateralToken from '../unlock-collateral-token/unlock-collateral-token.js';
-import PlaceLoanSuccess from '../place-loan-success/place-loan-success.js';
-import WizardSteps from '../wizard-steps/wizard-steps.js';
 import { SUPPORTED_TOKENS } from '../../common/api/config.js';
-import { DAYS, PERIODS } from "./constants"
+import PlaceLoanModal from "./PlaceLoanModal"
+import ShareLoanModal from "./ShareLoanModal"
+import { convertToRelayer } from "../../utils/relayer-adapter";
+import { parsePlexOrder, convertToDisplayFormat } from '../../common/services/dharmaService';
+import { DEFAULT_LOAN_REQUEST, termValues, DAYS, PERIODS } from "./constants";
 
-const termValues = {
-  1: { name: '1 day', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.DAILY] },
-  7: { name: '7 days', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.DAILY] },
-  28: { name: '28 days', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.WEEKLY] },
-  90: { name: '90 days', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.MONTHLY] },
-  180: { name: '180 days', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.MONTHLY] },
-  360: { name: '360 days', amortizationFrequencies: [RELAYER_AMORTIZATION_FREQUENCIES.MONTHLY] }
-};
-
-const floatOnly = (value) => {
+let floatOnly = (value, size) => {
   if (value === null || value === '' || value === undefined) {
     return ''
   }
-  let v = value.toString().replace(/[^\d.]/g, '')
-  v = v.slice(0, v.indexOf('.') >= 0 ? v.indexOf('.') + 6 : undefined)
-  return v
+  if (size === undefined) size = 6;
+  let v = value.toString().replace(/[^\d.]/g, '');
+  v = v.slice(0, v.indexOf('.') >= 0 ? v.indexOf('.') + size : undefined);
+  return v;
 };
 
-const percentNormalize = value => floatOnly(value) / 100;
-const percentFormat = value => value * 100;
-const required = value => (value ? false : true);
+const floatOnlyPct = (value) => floatOnly(value, 3);
+const floatOnlyNum = (value) => floatOnly(value, 6);
+
+const required = value => (!value);
+
+
+const getAmortizationPeriodByFrequency = amortizationFrequency =>
+  PERIODS.find(period => period.value === amortizationFrequency);
+
+const getAmortizationPeriodByUnit = amortizationUnit =>
+  PERIODS.find(period => period.dharmaUnit === amortizationUnit)
+
+const initialState = {
+  isShareLoanModalOpen: false,
+  debtOrder: null,
+  isShareLoanRequest: false,
+}
 
 class PlaceLoanRequest extends Component {
 
   constructor(props) {
     super(props);
 
-    this.reset = this.reset.bind(this);
-    this.cancelLoanRequest = this.cancelLoanRequest.bind(this);
     this.renderCurrencyOptions = this.renderCurrencyOptions.bind(this);
-    this.placeLoanRequestHandler = this.placeLoanRequestHandler.bind(this);
   }
 
-  getAmortizationPeriod = amortizationFrequency =>
-    PERIODS.find(period => period.value === amortizationFrequency)
+  state = initialState
 
-  placeLoanRequestClick(values) {
-    const amortizationPeriod = this.getAmortizationPeriod(values.amortizationFrequency)
+  placeLoanRequestClick = (values) => {
+    const amortizationPeriod = getAmortizationPeriodByFrequency(values.amortizationFrequency)
     this.props.showLoanConfirmation({
       ...values,
       amortizationFrequency: values.amortizationFrequency || termValues[values.term].amortizationFrequencies[0],
-      amortizationUnit: amortizationPeriod && amortizationPeriod.dharmaUnit,
+      amortizationUnit: amortizationPeriod && amortizationPeriod.dharmaUnit
     });
-  }
-
-  placeLoanRequestHandler(values){
-    let {placeLoanRequest, runGlobalUpdate, changeStep, debtOrderConfirmation:{stepNumber}} = this.props;
-    placeLoanRequest(values, () => {
-      changeStep(stepNumber + 1);
-      runGlobalUpdate();
-    });
-  }
-
-  cancelLoanRequest() {
-    this.reset();
-    this.props.hideLoanConfirmation();
-  }
-
-  reset() {
-    this.props.reset();
-    this.props.resetLoanForm();
-  }
-
-  renderAmortizationFrequencySelect(selectedTerm) {
-    return (
-      <Field name="amortizationFrequency" className="loan-request-form__select" component="select">
-        {
-          termValues[selectedTerm].amortizationFrequencies.map(freq => {
-            return (<option key={freq} value={freq}>{freq}</option>);
-          })
-        }
-      </Field>
-    );
   }
 
   renderCurrencyOptions() {
@@ -107,67 +68,41 @@ class PlaceLoanRequest extends Component {
     this.props.changeAmortizationFrequency(target.value);
   }
 
-  renderWizardWithUnlockStep(currentStepNumber){
-    return (
-      <WizardSteps steps={['Unlock', 'Review', 'Success']} currentStep={currentStepNumber} />
-    );
-  }
+  openShareModal = () =>
+    this.setState({ isShareLoanModalOpen: true })
 
-  renderWizardNoUnockStep(currentStepNumber){
-    return (
-      <WizardSteps steps={['Review', 'Success']} currentStep={currentStepNumber} />
-    );
-  }
+  closeShareModal = () =>
+    this.setState({ isShareLoanModalOpen: false })
 
-  renderModal(){
-    const { debtOrderConfirmation, placeLoan, changeStep, unlockCollateralToken, hideLoanConfirmation } = this.props;
-    let collateralExists = debtOrderConfirmation.collateralAmount > 0;
+  handleSignedLoanRequest = () =>
+    this.openShareModal()
 
-    let renderUnlockStep = false;
-    let renderReviewStep = false;
-    let renderFinalStep = false;
-    if(debtOrderConfirmation.modalVisible){
-      renderUnlockStep = collateralExists && (debtOrderConfirmation.stepNumber === 1);
-      renderReviewStep = (collateralExists && debtOrderConfirmation.stepNumber === 2) || (!collateralExists && debtOrderConfirmation.stepNumber === 1);
-      renderFinalStep = (collateralExists && debtOrderConfirmation.stepNumber === 3) || (!collateralExists && debtOrderConfirmation.stepNumber === 2);
+  submitShareLoan = (json) => {
+    if (json) {
+      const debtOrder = parsePlexOrder(json);
+      this.closeShareModal();
+      this.setState({ debtOrder, isShareLoanRequest: true });
+      convertToDisplayFormat(debtOrder)
+        .then(displayDebtOrder => {
+          let relayerOrderInfo = {
+            amount: displayDebtOrder.principalAmount.toNumber(),
+            currency: displayDebtOrder.principalTokenSymbol,
+            amortizationUnit: displayDebtOrder.amortizationUnit,
+            amortizationFrequency: getAmortizationPeriodByUnit(displayDebtOrder.amortizationUnit).value,
+            interestRate: displayDebtOrder.interestRate.toNumber(),
+            term: displayDebtOrder.termLength.toNumber()
+          };
+          if (displayDebtOrder.collateralAmount) {
+            relayerOrderInfo.collateralAmount = displayDebtOrder.collateralAmount.toNumber();
+            relayerOrderInfo.collateralType = displayDebtOrder.collateralTokenSymbol;
+          }
+          this.placeLoanRequestClick(relayerOrderInfo);
+        })
+        .catch(err => alert(err));
     }
+  };
 
-    return (
-      <Modal show={debtOrderConfirmation.modalVisible} size="md" onModalClosed={hideLoanConfirmation}>
-        <div className="loan-request-form__wizard-wrapper">
-          {collateralExists ? this.renderWizardWithUnlockStep(debtOrderConfirmation.stepNumber) : this.renderWizardNoUnockStep(debtOrderConfirmation.stepNumber)}
-        </div>
-
-        <ModalBody>
-          {
-            renderUnlockStep &&
-            <UnlockCollateralToken
-              collateralType={debtOrderConfirmation.collateralType}
-              collateralAmount={debtOrderConfirmation.collateralAmount}
-              collateralTokenUnlocked={debtOrderConfirmation.collateralTokenUnlocked}
-              unlockInProgress={debtOrderConfirmation.unlockInProgress}
-              onCancel={this.cancelLoanRequest}
-              onConfirm={() => changeStep(2)}
-              unlockCollateralToken={unlockCollateralToken}/>
-          }
-          {
-            renderReviewStep &&
-            <ConfirmLoanRequest
-              {...debtOrderConfirmation}
-              onCancel={() => {collateralExists ? changeStep(1) : this.cancelLoanRequest()} }
-              onConfirm={this.placeLoanRequestHandler}
-              isLoading={placeLoan.isLoading} />
-          }
-          {
-            renderFinalStep &&
-            <PlaceLoanSuccess
-              onConfirm={this.cancelLoanRequest}
-              withCollateral={collateralExists}/>
-          }
-        </ModalBody>
-      </Modal>
-    );
-  }
+  clearState = () => this.setState(initialState)
 
   render() {
     const { handleSubmit, valid, amortizationFrequency } = this.props;
@@ -175,7 +110,14 @@ class PlaceLoanRequest extends Component {
     return (
       <div className="loan-request-form">
         <div className="loan-request-form__header">
-          New loan request
+          New loan request <br />
+          <a
+            className="loan-request-link"
+            href="javascript:void(0)"
+            onClick={this.handleSignedLoanRequest}
+          >
+            Already have signed loan request?
+          </a>
         </div>
         <div className="loan-request-form__row loan-request-amount">
           <div className="loan-request-form__label-wrapper">
@@ -188,7 +130,7 @@ class PlaceLoanRequest extends Component {
               placeholder="0"
               component="input"
               validate={required}
-              normalize={floatOnly}/>
+              normalize={floatOnlyNum} />
           </div>
           <div className="loan-request-form__select-wrapper">
             <Field name="currency" className="loan-request-form__select" component="select">
@@ -206,8 +148,10 @@ class PlaceLoanRequest extends Component {
                 DAYS.map(day => <option key={day} value={day}>{day}</option>)
               }
             </Field>
-            <Field name="term_period" className="loan-request-form__select" component="select"
-                   onChange={this.termChange.bind(this)}>
+            <Field name="term_period"
+              className="loan-request-form__select"
+              component="select"
+              onChange={this.termChange.bind(this)}>
               {
                 PERIODS.map(({ title, value }) => <option key={title} value={value}>{title}</option>)
               }
@@ -218,10 +162,8 @@ class PlaceLoanRequest extends Component {
           <div className="loan-request-form__label-wrapper">
             <label className="loan-request-form__label">Payment</label>
           </div>
-          <div className="loan-request-form__select-wrapper">
-            <Field disabled name="amortizationFrequency" className="loan-request-form__select" component="select">
-              <option value={amortizationFrequency}>{amortizationFrequency}</option>
-            </Field>
+          <div className="loan-request-form__input-wrapper">
+            <input disabled value={amortizationFrequency || ""} className="loan-request-form__input" />
           </div>
         </div>
         <div className="loan-request-form__row">
@@ -235,8 +177,7 @@ class PlaceLoanRequest extends Component {
               placeholder="per loan term, %"
               component="input"
               validate={required}
-              format={percentFormat}
-              normalize={percentNormalize}/>
+              normalize={floatOnlyPct} />
           </div>
         </div>
 
@@ -257,7 +198,7 @@ class PlaceLoanRequest extends Component {
               className="loan-request-form__input"
               placeholder="0"
               component="input"
-              normalize={floatOnly}/>
+              normalize={floatOnlyNum} />
           </div>
           <div className="loan-request-form__select-wrapper">
             <Field name="collateralType" className="loan-request-form__select" component="select">
@@ -268,11 +209,20 @@ class PlaceLoanRequest extends Component {
         <div className="loan-request-form__place-btn-wrapper">
           <button
             className={"loan-request-form__place-btn " + (valid ? "" : "loan-request-form_disabled")}
-            onClick={handleSubmit(this.placeLoanRequestClick.bind(this))}>
+            onClick={handleSubmit(this.placeLoanRequestClick)}>
             PLACE LOAN REQUEST
           </button>
         </div>
-        {this.renderModal()}
+        <PlaceLoanModal
+          debtOrder={this.state.debtOrder}
+          isShareLoanRequest={this.state.isShareLoanRequest}
+          onRelayerSubmit={this.clearState}
+        />
+        <ShareLoanModal
+          isOpen={this.state.isShareLoanModalOpen}
+          handleClose={this.closeShareModal}
+          onSubmit={this.submitShareLoan}
+        />
       </div>
     );
   }
@@ -280,51 +230,26 @@ class PlaceLoanRequest extends Component {
 
 const selector = formValueSelector('LoanRequestForm');
 
-let mapStateToProps = state => ({
-  amount: selector(state, 'amount'),
-  term: selector(state, 'term'),
+const mapStateToProps = state => ({
   amortizationFrequency: selector(state, 'amortizationFrequency'),
-  debtOrderConfirmation: state.debtOrderConfirmation,
-  placeLoan: state.placeLoan
 });
-let mapDispatchToProps = (dispatch) => ({
-  placeLoanRequest(order, callback) {
-    dispatch(placeLoanRequest(order, callback))
-  },
+
+const mapDispatchToProps = (dispatch) => ({
   changeAmortizationFrequency(value) {
     dispatch(changeForm('LoanRequestForm', 'amortizationFrequency', value))
   },
-  resetLoanForm() {
-    dispatch(resetLoanForm());
-  },
-  hideLoanConfirmation() {
-    dispatch(hideLoanConfirmation());
-  },
   showLoanConfirmation(debtOrder) {
     dispatch(showLoanConfirmation(debtOrder));
-    dispatch(getCollateralTokenLock(debtOrder.collateralType));
-  },
-  runGlobalUpdate() {
-    dispatch(runGlobalUpdate());
-  },
-  changeStep(step){
-    dispatch(changeDebtOrderConfirmationStep(step));
-  },
-  unlockCollateralToken(token, amount, unlock){
-    if (unlock) {
-      dispatch(unlockCollateralToken(token, amount))
-    }
-    else {
-      dispatch(lockCollateralToken(token, amount))
+    if (debtOrder.collateralAmount) {
+      dispatch(getCollateralTokenLock(debtOrder.collateralType));
     }
   }
 });
 
-
 export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
   form: 'LoanRequestForm',
   initialValues: {
-    interestRate: 0.01,
+    interestRate: 1,
     term: 7,
     amortizationFrequency: RELAYER_AMORTIZATION_FREQUENCIES["HOURLY"],
     currency: SUPPORTED_TOKENS[0],

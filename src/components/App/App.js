@@ -7,10 +7,14 @@ import './App.css';
 import UserInfo from '../user-info/user-info.js';
 import LoanRequests from '../../containers/loan-requests/loan-requests';
 import IssuedLoans from '../../containers/issued-loans/issued-loans';
-import {HOST_URL} from '../../common/api/config'
+import OpenLoanRequests from '../../containers/open-loan-requests/open-loan-requests';
+import OutstandingLoans from '../../containers/outstanding-loans/outstanding-loans';
+import FundedLoans from '../../containers/funded-loans/funded-loans';
+import {HOST_URL} from '../../common/api/config';
 
 export const store = createStore(
   rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   applyMiddleware(
     thunkMiddleware
   ));
@@ -32,9 +36,21 @@ class App extends Component {
                 <IssuedLoans />
               </div>
             </div>
-          </div>
-          <div className="app__demo-link">
-            <a href={`${HOST_URL}/swagger/`} target="_blank">API Documentation</a>
+            <div className="app__content-bottom row flex-sm-nowrap">
+              <div className="app__small-table">
+                <OpenLoanRequests />
+              </div>
+              <div className="app__small-table">
+                <OutstandingLoans />
+              </div>
+              <div className="app__small-table">
+                <FundedLoans />
+              </div>
+            </div>
+            <div className="app__demo-link">
+              Contact us: <a href="mailto:contact@confirmationlabs.io">contact@confirmationlabs.io</a>
+              <a href={`${HOST_URL}/swagger/`} target="_blank">API Documentation</a>
+            </div>
           </div>
         </div>
       </Provider>

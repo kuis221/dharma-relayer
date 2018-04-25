@@ -7,11 +7,11 @@ import Spinner from '../../components/spinner/spinner.js';
 import '../../common/styles/pagination.css';
 import './issued-loans.css';
 
-const pageSize = 20;
+const pageSize = 17;
 
-let destroyTimer = null;
+let timer = null;
 let startTimer = (func) => {
-    destroyTimer = setTimeout(() => {
+    timer = setTimeout(() => {
         func();
         startTimer(func);
     }, 10000)
@@ -38,7 +38,7 @@ class IssuedLoans extends Component {
     }
 
     componentWillUnmount(){
-        destroyTimer && destroyTimer();
+        timer && clearTimeout(timer);
     }
 
     renderPagination(){
