@@ -23,7 +23,7 @@ import repayLoanReducer from "./repayLoanReducer";
 function walletInfoReducer(state = {
   address: getDefaultAccount(),
   amount: null,
-  selectedCurrency: SUPPORTED_TOKENS[0],
+  selectedCurrency: 'ETH',
   isProcessing:false
 }, action) {
   switch (action.type) {
