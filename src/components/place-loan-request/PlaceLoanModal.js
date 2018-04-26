@@ -19,6 +19,7 @@ import {
 } from "../../actions";
 import debtsApi from "../../common/api/debts";
 import {convertToRelayerFormat} from '../../common/services/dharmaService';
+import {reset} from 'redux-form';
 
 class PlaceLoanModal extends React.Component {
   constructor(props){
@@ -84,6 +85,7 @@ class PlaceLoanModal extends React.Component {
     this.setState({
       isShareLoanRequest: false
     });
+    this.props.resetLoanForm();
     this.props.hideLoanConfirmation();
   }
 
@@ -181,6 +183,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   resetLoanForm() {
     dispatch(resetLoanForm());
+    dispatch(reset('LoanRequestForm'));
   },
   runGlobalUpdate() {
     dispatch(runGlobalUpdate());
