@@ -11,7 +11,7 @@ import { SHOW_LOANSCAN_LINK } from '../../common/api/config';
 
 const initialState = {
   amount: "",
-  owe: ""
+  oweAmount: ""
 };
 
 let timer = null;
@@ -43,9 +43,9 @@ class RepayLoanModal extends React.Component {
   updateYourOwe = () => {
     getRemainingRepaymentValue(this.props.loan)
       .then(res => {
-        const owe = res.toFormat(5);
+        const oweAmount = res.toFormat(5);
         this.setState({
-          owe: `${owe} ${this.props.loan.principalTokenSymbol}`
+          oweAmount
         })
       })
   };
@@ -95,7 +95,7 @@ class RepayLoanModal extends React.Component {
             }.
           </div>
           <div>
-            You owe: { !this.state.owe ? <Spinner size="5px" class="inline" /> : <strong>{this.state.owe}</strong> }
+            You owe: { !this.state.oweAmount ? <Spinner size="5px" class="inline" /> : <strong>{this.state.oweAmount} {this.props.loan.principalTokenSymbol}</strong> }
           </div>
           <div>
             How large of repayment would you like to make?
@@ -151,7 +151,7 @@ class RepayLoanModal extends React.Component {
       <div>
         <div className="confirm">
           <div className="confirm__row">
-            <div className="confirm__header"><h5>Successfully made repayment of {this.state.amount} MKR</h5></div>
+            <div className="confirm__header"><h5>Successfully made repayment of {this.state.amount} {this.props.loan.principalTokenSymbol}</h5></div>
           </div>
           <div className="confirm__buttons">
             <div className="confirm__btn-wrapper confirm__btn-wrapper_centered">
