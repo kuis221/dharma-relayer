@@ -30,7 +30,7 @@ function renderRows({ rows, onRepay, onCancelLoan, repayAvailable, sellLoanAvail
 
       const amount = row.principalAmount;
       const amountString = amount.toFormat(3);
-      const interestRate = row.interestRate.times(100).toFixed(2);
+      const interestRate = row.interestRate.toFixed(2);
       const totalRepayment = calculateTotalPaymentAmount(amount, row.interestRate);
       const repaymentString = totalRepayment.toFormat(3);
       const rowIsClickable = SHOW_LOANSCAN_LINK && row.issuanceHash;
@@ -46,7 +46,7 @@ function renderRows({ rows, onRepay, onCancelLoan, repayAvailable, sellLoanAvail
           {
             sellLoanAvailable &&
             <td className="loan-table-small__table-cell loan-table-small__button-cell">
-              <button disabled className="loan-table-small__btn loan-table-small__btn_disabled">Sell</button>
+              <button disabled className="loan-table-small__btn loan-table-small__btn_disabled" title="Coming soon">Sell</button>
             </td>
           }
           {

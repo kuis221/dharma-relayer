@@ -8,6 +8,7 @@ import { SUPPORTED_TOKENS } from '../../common/api/config.js';
 import PlaceLoanModal from "./PlaceLoanModal"
 import ShareLoanModal from "./ShareLoanModal"
 import { convertToRelayer } from "../../utils/relayer-adapter";
+import { parsePlexOrder, convertToDisplayFormat } from '../../common/services/dharmaService';
 import { DEFAULT_LOAN_REQUEST, termValues, DAYS, PERIODS } from "./constants";
 
 let floatOnly = (value, size) => {
@@ -25,9 +26,16 @@ const floatOnlyNum = (value) => floatOnly(value, 6);
 
 const required = value => (!value);
 
+
+const getAmortizationPeriodByFrequency = amortizationFrequency =>
+  PERIODS.find(period => period.value === amortizationFrequency);
+
+const getAmortizationPeriodByUnit = amortizationUnit =>
+  PERIODS.find(period => period.dharmaUnit === amortizationUnit)
+
 const initialState = {
   isShareLoanModalOpen: false,
-  relayer: null,
+  debtOrder: null,
   isShareLoanRequest: false,
 }
 
@@ -41,15 +49,12 @@ class PlaceLoanRequest extends Component {
 
   state = initialState
 
-  getAmortizationPeriod = amortizationFrequency =>
-    PERIODS.find(period => period.value === amortizationFrequency)
-
   placeLoanRequestClick = (values) => {
-    const amortizationPeriod = this.getAmortizationPeriod(values.amortizationFrequency)
+    const amortizationPeriod = getAmortizationPeriodByFrequency(values.amortizationFrequency)
     this.props.showLoanConfirmation({
       ...values,
       amortizationFrequency: values.amortizationFrequency || termValues[values.term].amortizationFrequencies[0],
-      amortizationUnit: amortizationPeriod && amortizationPeriod.dharmaUnit,
+      amortizationUnit: amortizationPeriod && amortizationPeriod.dharmaUnit
     });
   }
 
@@ -72,22 +77,32 @@ class PlaceLoanRequest extends Component {
   handleSignedLoanRequest = () =>
     this.openShareModal()
 
-  submitShareLoan = (e) => {
-    e.preventDefault()
-    const { requestJson } = e.target.elements
-    try {
-      if (requestJson) {
-        const relayer = convertToRelayer(JSON.parse(requestJson.value))
-        this.closeShareModal()
-        this.setState({ relayer, isShareLoanRequest: true })
-        this.placeLoanRequestClick(DEFAULT_LOAN_REQUEST)
-      }
-    } catch (err) {
-      alert(err)
+  submitShareLoan = (json) => {
+    if (json) {
+      const debtOrder = parsePlexOrder(json);
+      this.closeShareModal();
+      this.setState({ debtOrder, isShareLoanRequest: true });
+      convertToDisplayFormat(debtOrder)
+        .then(displayDebtOrder => {
+          let relayerOrderInfo = {
+            amount: displayDebtOrder.principalAmount.toNumber(),
+            currency: displayDebtOrder.principalTokenSymbol,
+            amortizationUnit: displayDebtOrder.amortizationUnit,
+            amortizationFrequency: getAmortizationPeriodByUnit(displayDebtOrder.amortizationUnit).value,
+            interestRate: displayDebtOrder.interestRate.toNumber(),
+            term: displayDebtOrder.termLength.toNumber()
+          };
+          if (displayDebtOrder.collateralAmount) {
+            relayerOrderInfo.collateralAmount = displayDebtOrder.collateralAmount.toNumber();
+            relayerOrderInfo.collateralType = displayDebtOrder.collateralTokenSymbol;
+          }
+          this.placeLoanRequestClick(relayerOrderInfo);
+        })
+        .catch(err => alert(err));
     }
-  }
+  };
 
-  clearState = () => this.setState(initialState)
+  clearState = () => this.setState(initialState);
 
   render() {
     const { handleSubmit, valid, amortizationFrequency } = this.props;
@@ -95,7 +110,7 @@ class PlaceLoanRequest extends Component {
     return (
       <div className="loan-request-form">
         <div className="loan-request-form__header">
-          New loan request <br/>
+          New loan request <br />
           <a
             className="loan-request-link"
             href="javascript:void(0)"
@@ -115,7 +130,7 @@ class PlaceLoanRequest extends Component {
               placeholder="0"
               component="input"
               validate={required}
-              normalize={floatOnlyNum}/>
+              normalize={floatOnlyNum} />
           </div>
           <div className="loan-request-form__select-wrapper">
             <Field name="currency" className="loan-request-form__select" component="select">
@@ -128,15 +143,22 @@ class PlaceLoanRequest extends Component {
             <label className="loan-request-form__label">Term</label>
           </div>
           <div className="loan-request-form__row loan-request-amount loan-request-input-wrapper">
-            <Field name="term" className="loan-request-form__select loan-request-select-wrapper" component="select">
+            <Field
+              name="term"
+              className="loan-request-form__select loan-request-select-wrapper"
+              component="select"
+              validate={required}>
+              <option value="">Select</option>
               {
                 DAYS.map(day => <option key={day} value={day}>{day}</option>)
               }
             </Field>
             <Field name="term_period"
-                   className="loan-request-form__select"
-                   component="select"
-                   onChange={this.termChange.bind(this)}>
+              className="loan-request-form__select"
+              component="select"
+              onChange={this.termChange.bind(this)}
+              validate={required}>
+              <option value="">Select</option>
               {
                 PERIODS.map(({ title, value }) => <option key={title} value={value}>{title}</option>)
               }
@@ -162,7 +184,7 @@ class PlaceLoanRequest extends Component {
               placeholder="per loan term, %"
               component="input"
               validate={required}
-              normalize={floatOnlyPct}/>
+              normalize={floatOnlyPct} />
           </div>
         </div>
 
@@ -183,7 +205,7 @@ class PlaceLoanRequest extends Component {
               className="loan-request-form__input"
               placeholder="0"
               component="input"
-              normalize={floatOnlyNum}/>
+              normalize={floatOnlyNum} />
           </div>
           <div className="loan-request-form__select-wrapper">
             <Field name="collateralType" className="loan-request-form__select" component="select">
@@ -194,12 +216,13 @@ class PlaceLoanRequest extends Component {
         <div className="loan-request-form__place-btn-wrapper">
           <button
             className={"loan-request-form__place-btn " + (valid ? "" : "loan-request-form_disabled")}
+            disabled={!valid}
             onClick={handleSubmit(this.placeLoanRequestClick)}>
             PLACE LOAN REQUEST
           </button>
         </div>
         <PlaceLoanModal
-          relayer={this.state.relayer}
+          debtOrder={this.state.debtOrder}
           isShareLoanRequest={this.state.isShareLoanRequest}
           onRelayerSubmit={this.clearState}
         />
@@ -225,16 +248,15 @@ const mapDispatchToProps = (dispatch) => ({
   },
   showLoanConfirmation(debtOrder) {
     dispatch(showLoanConfirmation(debtOrder));
-    dispatch(getCollateralTokenLock(debtOrder.collateralType));
-  },
+    if (debtOrder.collateralAmount) {
+      dispatch(getCollateralTokenLock(debtOrder.collateralType));
+    }
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
   form: 'LoanRequestForm',
   initialValues: {
-    interestRate: 1,
-    term: 7,
-    amortizationFrequency: RELAYER_AMORTIZATION_FREQUENCIES["HOURLY"],
     currency: SUPPORTED_TOKENS[0],
     collateralType: SUPPORTED_TOKENS[0]
   }

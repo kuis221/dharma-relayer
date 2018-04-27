@@ -8,12 +8,17 @@ class ShareLoanModal extends React.Component {
 
   handleRequestJson = ({ target }) => this.setState({ requestJson: target.value })
 
+  submitForm(event){
+    event.preventDefault();
+    this.props.onSubmit(this.state.requestJson);
+  }
+
   render() {
-    const { handleClose, isOpen, onSubmit } = this.props
+    const { handleClose, isOpen } = this.props
     return (
       <Modal show={isOpen} size="md" onModalClosed={handleClose}>
         <ModalBody>
-          <form onSubmit={onSubmit} className="confirm">
+          <form onSubmit={this.submitForm.bind(this)} className="confirm">
             <div className="confirm__row">
               <div className="confirm__header">
                 <h1>
