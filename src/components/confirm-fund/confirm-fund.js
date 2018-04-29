@@ -28,7 +28,7 @@ class ConfirmFund extends Component {
         isLoading={isLoading}>
 
         <div className="confirm__row">
-          Loan amount: <strong>{amount.toFormat(3)}</strong> {token}
+          Loan amount: <strong>{amount.toFormat(5)}</strong> {token}
         </div>
         <div className="confirm__row">
           Loan term: <strong>{termLength}</strong> {amortizationUnit}
@@ -39,7 +39,7 @@ class ConfirmFund extends Component {
         {
           collateralAmount && (
             <div className="confirm__row">
-              Collateral amount: <strong>{collateralAmount.toFormat(3)}</strong> {collateralType}
+              Collateral amount: <strong>{collateralAmount.toFormat(5)}</strong> {collateralType}
             </div>
           )
         }
