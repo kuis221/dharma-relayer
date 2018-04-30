@@ -8,7 +8,7 @@ const supportedTokensPromise = dharmaService.getSupportedTokens();
 const TokenContract = contract({
   abi: TOKEN_ABI
 });
-TokenContract.setProvider(web3Provider);
+web3Provider && TokenContract.setProvider(web3Provider);
 
 export async function convertToHumanReadable(amount, tokenSymbol) {
   const decimals = await getTokenDecimals(tokenSymbol);
