@@ -91,7 +91,7 @@
   border-radius: 2px;
   margin: 8px 0;
 }
-.loan-request-form_disabled{
+.loan-request-form__place-btn:disabled {
   background: #3D4966;
   color: #7F879A;
   cursor: not-allowed;

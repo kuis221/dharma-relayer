@@ -35,14 +35,14 @@ class PlaceLoanModal extends React.Component {
     this.setState({
       isShareLoanRequest: false
     });
-  }
+  };
 
   renderWizardWithUnlockStep = (currentStepNumber) => (
     <WizardSteps
       steps={['Unlock', 'Review', 'Success']}
       currentStep={currentStepNumber}
     />
-  )
+  );
 
   placeLoanRequestHandler = (values) => {
     const { placeLoanRequest, runGlobalUpdate, changeStep, debtOrderConfirmation:{ stepNumber } } = this.props;
@@ -50,14 +50,14 @@ class PlaceLoanModal extends React.Component {
       changeStep(stepNumber + 1);
       runGlobalUpdate();
     });
-  }
+  };
 
   renderWizardNoUnockStep = (currentStepNumber) => (
     <WizardSteps
       steps={['Review', 'Success']}
       currentStep={currentStepNumber}
     />
-  )
+  );
 
   shareLoanRequestHandler = () => {
     convertToRelayerFormat(this.props.debtOrder).then(
@@ -68,10 +68,10 @@ class PlaceLoanModal extends React.Component {
       this.props.changeStep(2);
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
       this.props.placeLoanRequestFail(err)
     });
-  }
+  };
 
   componentWillReceiveProps(newProps){
     if(newProps.isShareLoanRequest){
@@ -96,7 +96,7 @@ class PlaceLoanModal extends React.Component {
       changeStep,
       unlockCollateralToken,
       hideLoanConfirmation
-    } = this.props
+    } = this.props;
     const collateralExists = debtOrderConfirmation.collateralAmount > 0;
 
     let renderUnlockStep = false;
