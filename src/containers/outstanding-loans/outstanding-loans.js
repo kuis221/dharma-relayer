@@ -101,7 +101,7 @@ class OutstandingLoans extends Component {
           header="My outstanding loans"
           dateColumnHeader="Date loan issued"
           repayAvailable={true}
-          handleRepay={this.handleRepayModal}
+          onRepay={this.handleRepayModal}
           rows={rows}
           isLoading={isLoading}
           showPaging={showPaging}
