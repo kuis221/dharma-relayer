@@ -18,17 +18,13 @@ class UnlockLendingToken extends Component {
         <Confirm
           header="Unlock tokens"
           confirmText="NEXT"
-          confirmDisabled={!lendTokenUnlocked}
+          confirmDisabled={!lendTokenUnlocked || unlockInProgress}
           cancelText="CANCEL"
           onConfirm={() => onConfirm()}
           onCancel={onCancel}>
 
           <ul className="unlock-tokens__list">
             <li>Creditors have to unlock their tokens to enable lending of designated tokens. To unlock your tokens click the toggle below.</li>
-            {
-              lendTokenUnlocked &&
-              <li>Your {lendType} tokens you want to lend are already unlocked. Please click next to continue.</li>
-            }
           </ul>
 
           <div className="unlock-tokens__toggle-row">
@@ -39,6 +35,13 @@ class UnlockLendingToken extends Component {
               Toggle to UNLOCK {lendType} tokens you want to lend
             </div>
           </div>
+
+          <ul className="unlock-tokens__list">
+            {
+              lendTokenUnlocked && !unlockInProgress &&
+              <li>Your {lendType} tokens you want to lend are already unlocked. Please click next to continue.</li>
+            }
+          </ul>
 
         </Confirm>
       </div>
