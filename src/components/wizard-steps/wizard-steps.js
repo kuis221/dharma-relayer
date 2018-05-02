@@ -24,7 +24,7 @@ class WizardSteps extends Component {
 
   render() {
     let { steps, currentStep } = this.props;
-    const isLastStep = steps.length === currentStep
+    const isLastStep = steps.length === currentStep;
     let i = 1;
     return (
       <div className="wizard">

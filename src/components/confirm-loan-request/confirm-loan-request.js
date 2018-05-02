@@ -23,7 +23,7 @@ class ConfirmLoanRequest extends Component {
           isLoading={isLoading}>
 
           <div className="confirm__row">
-            Loan amount: <strong>{new BigNumber(amount).toFormat(3)}</strong> {currency}
+            Loan amount: <strong>{new BigNumber(amount).toFormat(5)}</strong> {currency}
           </div>
           <div className="confirm__row">
             Loan term: <strong>{term}</strong> {amortizationUnit}
@@ -34,7 +34,7 @@ class ConfirmLoanRequest extends Component {
           {
             collateralAmount && (
               <div className="confirm__row">
-                Collateral amount: <strong>{new BigNumber(collateralAmount).toFormat(3)}</strong> {collateralType}
+                Collateral amount: <strong>{new BigNumber(collateralAmount).toFormat(5)}</strong> {collateralType}
               </div>
             )
           }

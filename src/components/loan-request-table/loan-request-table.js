@@ -52,8 +52,15 @@ function renderRows(rows, fundFunction) {
 function LoanRequestsTable(props) {
   return (
     <div className="loan-table scrollable-table">
-      <div className="loan-table__header">
-        {props.header}
+      <div className="loan-table__nav">
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <a className="nav-link active" href="#">{props.header}</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link disabled" href="#" title="Coming soon">Secondary trading</a>
+          </li>
+        </ul>
       </div>
       <table className="loan-table__table loan-table__stripe">
         <thead>
