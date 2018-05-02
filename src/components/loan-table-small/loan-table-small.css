@@ -81,5 +81,6 @@
 }
 
 .loan-table-small__btn_cancel{
+  display: none;
   background-color: #B51313;
 }
