@@ -32,3 +32,6 @@ export * from './repayLoan';
 export * from './cancelLoanRequest';
 export * from './showCancelConfirmation';
 export * from './hideCancelConfirmation';
+export * from './showDisclosure';
+export * from './hideDisclosure';
+export * from './confirmDisclosure';

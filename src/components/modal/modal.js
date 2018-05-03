@@ -12,7 +12,7 @@ export class Modal extends Component{
 
     this._render(this.props);
 
-    $(this.modalTarget).modal({show: this.props.show});
+    $(this.modalTarget).modal({show: this.props.show, backdrop: this.props.backdrop || true});
     $(this.modalTarget).on('hidden.bs.modal', () => this.props.onModalClosed && this.props.onModalClosed());
   }
 
