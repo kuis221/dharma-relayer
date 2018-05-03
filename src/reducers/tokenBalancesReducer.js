@@ -14,7 +14,7 @@ import { SUPPORTED_TOKENS } from '../common/api/config';
 
 
 function getTokens() {
-  const tokens = {}
+  const tokens = {};
   SUPPORTED_TOKENS.forEach(token => {
     tokens[token] = {
       amount: null,

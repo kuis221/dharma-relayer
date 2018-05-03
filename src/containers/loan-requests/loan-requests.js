@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, runGlobalUpdate, getTokenBalance, setLoanRequestsOffset } from '../../actions';
+import { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, setLoanRequestsOffset } from '../../actions';
 import LoanRequestsTable from '../../components/loan-request-table/loan-request-table';
-import {Modal, ModalBody} from '../../components/modal/modal';
-import ConfirmFund from '../../components/confirm-fund/confirm-fund';
+import FundLoanModal from '../../components/fund-loan-modal/FundLoanModal';
 import Spinner from '../../components/spinner/spinner.js';
 import Paging from '../../components/paging/paging.js';
 import './loan-requests.css';
@@ -24,7 +23,6 @@ class LoanRequests extends Component {
     constructor(props){
         super(props);
 
-        this.confirmFillLoanRequest = this.confirmFillLoanRequest.bind(this);
         this.getLoanRequestsForCurrentPage = this.getLoanRequestsForCurrentPage.bind(this);
     }
 
@@ -43,14 +41,6 @@ class LoanRequests extends Component {
 
     componentWillUnmount(){
         timer && clearTimeout(timer);
-    }
-
-    confirmFillLoanRequest(debtOrder){
-        let {fillLoanRequest, runGlobalUpdate, getTokenBalance} = this.props;
-        fillLoanRequest(debtOrder, () => {
-            runGlobalUpdate();
-            getTokenBalance(debtOrder.dharmaDebtOrder.principalTokenSymbol);
-        })
     }
 
     renderPagination(){
@@ -87,14 +77,7 @@ class LoanRequests extends Component {
                 <div className="relayer-pagination">
                     {showPaging && this.renderPagination()}
                 </div>
-                <Modal show={fundConfirmation.modalVisible} size="md" onModalClosed={hideFundConfirmation}>
-                    <ModalBody>
-                        {
-                            fundConfirmation.modalVisible && fundConfirmation.loanRequest &&
-                            <ConfirmFund loanRequest={fundConfirmation.loanRequest} onCancel={hideFundConfirmation} onConfirm={this.confirmFillLoanRequest} isLoading={fillLoan.isLoading}/>
-                        }
-                    </ModalBody>
-                </Modal>
+                {fundConfirmation.loanRequest && <FundLoanModal/>}
             </div>
         );
     }
@@ -110,6 +93,6 @@ let mapStateToProps = ({loanRequests, fundConfirmation, fillLoan}) => ({
     totalItemsCount: loanRequests.totalItemsCount
 });
 
-let mapDispatchToProps = { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, runGlobalUpdate, getTokenBalance, setLoanRequestsOffset };
+let mapDispatchToProps = { getLoanRequests, fillLoanRequest, showFundConfirmation, hideFundConfirmation, setLoanRequestsOffset };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoanRequests);

@@ -19,6 +19,7 @@ export * from './lockToken';
 export * from './getTokenLock';
 export * from './getTokenName';
 export * from './changeDebtOrderConfirmationStep';
+export * from './changeFundConfirmationStep';
 export * from './unlockCollateralToken';
 export * from './lockCollateralToken';
 export * from './setLoanRequestsOffset';
