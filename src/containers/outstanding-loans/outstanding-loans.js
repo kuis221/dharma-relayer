@@ -6,6 +6,7 @@ import {
   repayLoanInit,
   repayLoanSuccess,
   repayLoanFail,
+  repayLoanResetStatus
 } from '../../actions';
 import LoanTableSmall from '../../components/loan-table-small/loan-table-small.js';
 import {Modal, ModalBody} from '../../components/modal/modal';
@@ -61,7 +62,7 @@ class OutstandingLoans extends Component {
   handleCloseModal = () =>
     this.setState(prevState => ({
         isRepayModalOpened: false
-      })
+      }), () => this.props.repayLoanResetStatus()
     );
 
   handleRepayModal = loan => {
@@ -148,6 +149,7 @@ let mapDispatchToProps = {
   repayLoanInit,
   repayLoanSuccess,
   repayLoanFail,
+  repayLoanResetStatus
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OutstandingLoans);
